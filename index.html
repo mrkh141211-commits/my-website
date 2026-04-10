@@ -1,154 +1,197 @@
-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>成長ノート</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
-:root{--ink:#2a2a2a;--surface:#fff;--surface2:#f0ede6;--blue:#3a6fa8;--blue-light:#e8eef8;--red:#c94040;--green:#3a7a55;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.10);--shadow-h:0 6px 18px rgba(0,0,0,0.14);--border:1px solid rgba(0,0,0,0.10);}
+:root{
+  --ink:#2a2a2a;--surface:#fff;--surface2:#f0ede6;
+  --blue:#3a6fa8;--blue-light:#e8eef8;--red:#c94040;--green:#3a7a55;
+  --radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-h:0 6px 20px rgba(0,0,0,0.13);
+  --border:1px solid rgba(0,0,0,0.08);
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'M PLUS Rounded 1c',sans-serif;color:var(--ink);font-size:15px;}
 .screen{display:none}.screen.active{display:block}
-.nb-bg{background-color:#f7f5f0;background-image:linear-gradient(rgba(0,0,0,0.055) 1px,transparent 1px);background-size:100% 32px;background-position:0 31px;min-height:100vh;}
-.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);border-bottom:2px solid var(--blue);box-shadow:0 2px 8px rgba(0,0,0,0.07);}
-.logo{font-size:20px;font-weight:800;color:var(--blue);}
-.btn{font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;background:var(--surface);border:1.5px solid rgba(0,0,0,0.18);border-radius:20px;padding:6px 14px;cursor:pointer;color:var(--ink);transition:all .15s;}
-.btn:hover{background:var(--surface2);}
+
+/* ===== HOME ===== */
+.home-wrap{
+  background:linear-gradient(135deg,#e8f4fd 0%,#fce8f3 50%,#e8f5e9 100%);
+  min-height:100vh;padding-bottom:40px;
+}
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;padding:13px 20px;
+  background:rgba(255,255,255,0.72);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,0,0,0.07);position:sticky;top:0;z-index:10;
+}
+.logo{font-size:21px;font-weight:800;color:var(--blue);}
+.top-right{display:flex;align-items:center;gap:8px;}
+.sync-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#e8f5e9;color:#3a7a55;border:1px solid #b2dfdb;display:none;}
+.sync-badge.show{display:inline-block;}
+.sync-badge.saving{background:#fff8e1;color:#f57f17;border-color:#ffe082;}
+.btn{font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;background:rgba(255,255,255,0.8);border:1px solid rgba(0,0,0,0.12);border-radius:20px;padding:6px 14px;cursor:pointer;color:var(--ink);transition:all .15s;}
+.btn:hover{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
 .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
 .btn.primary:hover{background:#2a5a90;}
 .btn.danger{background:var(--red);color:#fff;border-color:var(--red);}
 .btn.success{background:var(--green);color:#fff;border-color:var(--green);}
-.btn.sm{font-size:11px;padding:3px 10px;}
-.sem-tabs{display:flex;background:var(--surface);border-bottom:var(--border);padding:0 16px;}
-.sem-tab{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:700;padding:10px 20px;cursor:pointer;color:#999;background:transparent;border:none;border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .15s;}
-.sem-tab.active{color:var(--blue);border-bottom:3px solid var(--blue);}
-.grid-wrap{padding:14px 10px 20px;}
-.number-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
-.num-btn{aspect-ratio:.95;font-family:'M PLUS Rounded 1c',sans-serif;background:var(--surface);border:2px solid rgba(0,0,0,0.10);border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:all .15s;padding:6px 4px 8px;}
-.num-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);border-color:var(--blue);}
-.num-btn:nth-child(6n+1){border-top:4px solid #c94040;}.num-btn:nth-child(6n+2){border-top:4px solid #d4a017;}.num-btn:nth-child(6n+3){border-top:4px solid #3a6fa8;}.num-btn:nth-child(6n+4){border-top:4px solid #3a7a55;}.num-btn:nth-child(6n+5){border-top:4px solid #7a4fbf;}.num-btn:nth-child(6n+6){border-top:4px solid #c07030;}
-.num-btn.has-content{background:#fffbee;}
-.num-number{font-size:clamp(22px,5.5vw,42px);font-weight:800;line-height:1.05;}
-.num-name-input{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(9px,2vw,12px);font-weight:700;color:#555;width:90%;border:none;border-bottom:1.5px solid transparent;background:transparent;text-align:center;outline:none;padding:1px 2px;margin-top:2px;cursor:text;border-radius:4px;transition:all .15s;}
-.num-name-input::placeholder{color:#ccc;font-weight:500;}
-.num-name-input:focus{border-bottom:1.5px solid var(--blue);background:rgba(58,111,168,0.06);}
-.num-btn .dot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--red);}
-.num-btn .unread-badge{position:absolute;top:5px;left:5px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;}
-.center-wrap{display:flex;align-items:center;justify-content:center;padding:40px 16px;min-height:70vh;}
-.login-card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-h);padding:28px 24px;width:100%;max-width:300px;border:var(--border);}
-.login-card h3{font-size:18px;font-weight:800;margin-bottom:6px;}
+.btn.sm{font-size:11px;padding:4px 11px;}
+.sem-tabs{display:flex;gap:4px;padding:14px 20px 0;}
+.sem-tab{font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:7px 18px;border-radius:30px;cursor:pointer;border:1px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.6);color:#888;transition:all .2s;}
+.sem-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 20px;}
+.num-card{
+  aspect-ratio:1;border-radius:14px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;
+  background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.9);
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+.num-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);}
+.num-card.has-post{background:rgba(255,251,238,0.95);}
+.num-card:nth-child(5n+1){border-top:3px solid #e57373;}
+.num-card:nth-child(5n+2){border-top:3px solid #ffb74d;}
+.num-card:nth-child(5n+3){border-top:3px solid #64b5f6;}
+.num-card:nth-child(5n+4){border-top:3px solid #81c784;}
+.num-card:nth-child(5n){border-top:3px solid #ce93d8;}
+.num-card .dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--red);}
+.num-card .ubadge{position:absolute;top:5px;left:5px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;}
+.num-num{font-size:clamp(20px,4vw,34px);font-weight:800;color:var(--ink);line-height:1;}
+.name-inp{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(9px,1.7vw,11px);font-weight:700;color:#666;background:transparent;border:none;border-bottom:1px solid transparent;text-align:center;outline:none;width:85%;margin-top:3px;}
+.name-inp::placeholder{color:#ccc;}
+.name-inp:focus{border-bottom-color:var(--blue);}
+
+/* ===== LOGIN ===== */
+.nb-bg{background:linear-gradient(135deg,#e8f4fd 0%,#fce8f3 50%,#e8f5e9 100%);min-height:100vh;}
+.center-wrap{display:flex;align-items:center;justify-content:center;padding:40px 16px;min-height:100vh;}
+.login-card{background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);border-radius:20px;box-shadow:var(--shadow-h);padding:30px 26px;width:100%;max-width:300px;border:1px solid rgba(255,255,255,0.9);}
+.login-card h3{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--ink);}
 .login-card p{font-size:13px;color:#888;margin-bottom:16px;line-height:1.6;}
-.field{width:100%;margin-bottom:10px;font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:500;padding:10px 13px;border:1.5px solid rgba(0,0,0,0.15);border-radius:10px;background:var(--surface);color:var(--ink);}
-.field:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,.12);}
+.field{width:100%;margin-bottom:10px;font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:500;padding:10px 13px;border:1.5px solid rgba(0,0,0,0.12);border-radius:12px;background:rgba(255,255,255,0.8);color:var(--ink);}
+.field:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,.1);}
 .err{color:var(--red);font-size:12px;font-weight:700;margin-bottom:8px;min-height:14px;}
 .btn-row{display:flex;gap:8px;}
+
+/* ===== BOARD ===== */
+#screen-board{background:linear-gradient(160deg,#f0f4ff 0%,#fdf6ff 40%,#f0fff4 100%);}
 .board-inner{display:flex;flex-direction:column;height:100vh;}
-.board-header{flex:0 0 auto;background:var(--surface);border-bottom:2px solid var(--blue);padding:0;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
-.board-header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;gap:8px;flex-wrap:wrap;}
+.board-header{
+  flex:0 0 auto;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,0.07);position:sticky;top:0;z-index:10;
+}
+.board-header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px;gap:8px;flex-wrap:wrap;}
 .board-id-block{display:flex;align-items:center;gap:10px;}
-.board-num-badge{font-family:'M PLUS Rounded 1c',sans-serif;font-size:28px;font-weight:800;color:var(--blue);line-height:1;}
+.board-num-badge{font-size:26px;font-weight:800;color:var(--blue);line-height:1;}
 .board-name-block{display:flex;flex-direction:column;gap:1px;}
-.board-user-name{font-size:17px;font-weight:800;color:var(--ink);line-height:1.2;}
+.board-user-name{font-size:16px;font-weight:800;color:var(--ink);}
 .board-sem-badge{font-size:11px;font-weight:700;background:var(--blue-light);color:var(--blue);border-radius:20px;padding:2px 10px;display:inline-block;}
-.board-header-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.bg-ctrl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.bg-ctrl-label{font-size:11px;font-weight:700;color:#aaa;}
+.board-ctrl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .bg-swatch{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s;flex-shrink:0;}
 .bg-swatch:hover,.bg-swatch.sel{border-color:var(--ink);transform:scale(1.2);}
 input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;border:2px solid #ccc;padding:0;cursor:pointer;background:none;}
-.bg-img-label{font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;border-radius:20px;border:1.5px solid rgba(0,0,0,0.18);background:#fff;color:#555;white-space:nowrap;}
-.bg-img-clear{font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;border-radius:20px;border:1.5px solid var(--red);background:#fff;color:var(--red);white-space:nowrap;display:none;}
-.restore-banner{background:#fffbe6;border:1.5px solid #f5c518;border-radius:8px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;}
-.restore-banner-text{font-size:12px;font-weight:700;color:#8a6c00;flex:1;line-height:1.4;}
-.restore-banner-btns{display:flex;gap:6px;flex-shrink:0;}
-.cols-scroll{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;display:flex;gap:14px;align-items:flex-start;padding:16px;background-size:cover;background-position:center;}
-.padlet-col{flex:0 0 230px;display:flex;flex-direction:column;background:var(--surface);border-radius:var(--radius);border:var(--border);box-shadow:var(--shadow);overflow:hidden;}
-.col-header{padding:10px 12px 8px;border-bottom:2px solid rgba(0,0,0,0.08);background:#fafaf7;display:flex;align-items:center;gap:6px;}
-.col-title-display{font-size:15px;font-weight:800;cursor:pointer;flex:1;padding:2px 5px;border-radius:6px;border:1.5px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.col-title-display:hover{background:var(--blue-light);border-color:var(--blue);}
-.col-title-input{font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px;font-weight:800;flex:1;border:1.5px solid var(--blue);border-radius:6px;padding:2px 6px;background:var(--blue-light);outline:none;display:none;}
-.col-add-btn{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.bg-img-label{font-size:11px;font-weight:700;padding:4px 11px;cursor:pointer;border-radius:20px;border:1px solid rgba(0,0,0,0.12);background:rgba(255,255,255,0.8);color:#555;white-space:nowrap;}
+.bg-img-clear{font-size:11px;font-weight:700;padding:4px 11px;cursor:pointer;border-radius:20px;border:1px solid var(--red);background:rgba(255,255,255,0.8);color:var(--red);white-space:nowrap;display:none;}
+.restore-bar{background:rgba(255,251,220,0.95);border-bottom:1px solid rgba(245,197,24,0.4);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;}
+.restore-bar-text{font-size:12px;font-weight:700;color:#8a6c00;flex:1;}
+.restore-bar-btns{display:flex;gap:6px;flex-shrink:0;}
+
+/* ===== COLS SCROLL ===== */
+.cols-scroll{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;display:flex;gap:14px;align-items:flex-start;padding:18px 20px;background-size:cover;background-position:center;}
+
+/* ===== PADLET COL ===== */
+.padlet-col{flex:0 0 260px;display:flex;flex-direction:column;background:rgba(255,255,255,0.65);backdrop-filter:blur(8px);border-radius:16px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 2px 16px rgba(0,0,0,0.07);overflow:hidden;}
+.col-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(255,255,255,0.5);border-bottom:1px solid rgba(0,0,0,0.06);gap:6px;}
+.col-title-disp{font-size:14px;font-weight:800;color:var(--ink);cursor:pointer;flex:1;padding:2px 5px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.col-title-disp:hover{background:var(--blue-light);}
+.col-title-inp{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:800;flex:1;border:1.5px solid var(--blue);border-radius:6px;padding:2px 6px;background:var(--blue-light);outline:none;display:none;}
+.col-add-btn{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
 .col-add-btn:hover{background:#2a5a90;transform:scale(1.1);}
-.col-del-btn{width:22px;height:22px;border-radius:50%;background:transparent;color:#ccc;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.col-del-btn{width:20px;height:20px;border-radius:50%;background:transparent;color:#ccc;border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .col-del-btn:hover{background:#fee;color:var(--red);}
-.col-cards{padding:10px 10px 6px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:420px;background-image:linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);background-size:100% 28px;background-position:0 27px;background-color:#fefef8;}
-.cc-white{background:#fff;}.cc-yellow{background:#fffde7;}.cc-blue{background:#e8f0fb;}.cc-green{background:#e8f5e9;}.cc-pink{background:#fce4ec;}
-.color-picker{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
-.cp-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s;flex-shrink:0;}
-.cp-dot:hover,.cp-dot.sel{border-color:var(--ink);transform:scale(1.2);}
+.col-cards{padding:10px 10px 8px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:480px;}
 
-/* ★ インライン編集カード */
-.padlet-card{border-radius:8px;border:1.5px solid rgba(0,0,0,0.08);box-shadow:0 1px 4px rgba(0,0,0,0.07);transition:transform .15s,box-shadow .15s;cursor:pointer;user-select:none;}
-.padlet-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.13);}
-.padlet-card.editing{cursor:default;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,0.15);}
-.card-img{width:100%;max-height:160px;object-fit:cover;border-radius:6px 6px 0 0;display:block;}
-.card-body{padding:10px 11px 6px;}
-.card-text{font-size:14px;font-weight:500;line-height:1.7;white-space:pre-wrap;}
+/* ===== RICH CARD ===== */
+.rich-card{border-radius:12px;overflow:hidden;cursor:pointer;background:#fff;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);}
+.rich-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.13);}
+.rich-card.editing{cursor:default;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,0.15);}
+.card-img-area{width:100%;height:140px;object-fit:cover;display:block;}
+.card-img-grad{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.gi-blue{background:linear-gradient(135deg,#a8edea,#fed6e3);}
+.gi-yellow{background:linear-gradient(135deg,#ffecd2,#fcb69f);}
+.gi-green{background:linear-gradient(135deg,#d4fc79,#96e6a1);}
+.gi-pink{background:linear-gradient(135deg,#f6d365,#fda085);}
+.gi-white{background:linear-gradient(135deg,#e0e0e0,#f5f5f5);}
+.cc-white{background:#fff;}
+.cc-yellow{background:#fffde7;}
+.cc-blue{background:#e8f0fb;}
+.cc-green{background:#e8f5e9;}
+.cc-pink{background:#fce4ec;}
+.card-body{padding:10px 12px 6px;}
+.card-text{font-size:13px;font-weight:500;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+.card-stamps{font-size:16px;padding:2px 0;display:flex;gap:3px;flex-wrap:wrap;}
+.card-ts{font-size:10px;color:#bbb;margin-top:3px;font-style:italic;}
+.admin-reply-band{background:#e8f5f0;border-top:2px solid #5aad88;padding:6px 12px;font-size:11px;font-weight:500;color:#2e7a55;}
+.admin-reply-band strong{display:block;font-size:9px;opacity:.6;margin-bottom:1px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 8px;border-top:1px solid rgba(0,0,0,0.05);}
+.like-btn{display:flex;align-items:center;gap:3px;font-size:12px;color:#ccc;cursor:pointer;border:none;background:none;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:700;transition:color .1s;}
+.like-btn:hover,.like-btn.liked{color:var(--red);}
+.comment-btn{display:flex;align-items:center;gap:3px;font-size:11px;color:#aaa;cursor:pointer;border:none;background:none;padding:2px 6px;border-radius:6px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:700;transition:background .1s;}
+.comment-btn:hover{background:var(--blue-light);color:var(--blue);}
+.unread-dot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block;margin-left:2px;}
+.del-btn{font-size:11px;color:#ddd;background:none;border:none;cursor:pointer;padding:2px 5px;border-radius:4px;transition:all .1s;}
+.del-btn:hover{color:var(--red);background:#fee;}
 
-/* インライン編集エリア */
+/* ===== INLINE EDIT ===== */
 .card-edit-area{padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
-.card-edit-area textarea{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:500;width:100%;border:1.5px solid var(--blue);border-radius:8px;padding:8px 10px;resize:none;outline:none;color:var(--ink);background:#fff;line-height:1.6;}
-.card-edit-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.card-edit-img-label{font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;border-radius:20px;border:1.5px solid rgba(0,0,0,0.18);background:#fff;color:#555;white-space:nowrap;}
-.card-edit-btns{display:flex;gap:5px;margin-left:auto;}
+.card-edit-area textarea{font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:500;width:100%;border:1.5px solid var(--blue);border-radius:8px;padding:8px 10px;resize:none;outline:none;color:var(--ink);background:#fff;line-height:1.6;overflow:hidden;min-height:56px;}
+.color-picker{display:flex;gap:5px;align-items:center;margin-bottom:4px;}
+.cp-dot{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s;flex-shrink:0;}
+.cp-dot:hover,.cp-dot.sel{border-color:var(--ink);transform:scale(1.2);}
+.edit-btns-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.edit-hint{font-size:10px;color:#aaa;flex:1;}
+.e-btn{font-family:'M PLUS Rounded 1c',sans-serif;font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;cursor:pointer;border:1.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;transition:all .1s;}
+.e-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.img-change-label{font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;border-radius:16px;border:1.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;white-space:nowrap;}
 
-.card-stamps{font-size:18px;padding:2px 11px 4px;display:flex;gap:4px;flex-wrap:wrap;}
-.card-ts{font-size:10px;color:#bbb;padding:2px 11px 5px;font-style:italic;}
-.card-footer{display:flex;align-items:center;justify-content:space-between;padding:5px 11px 8px;border-top:1px solid rgba(0,0,0,0.06);}
-.card-likes{display:flex;align-items:center;gap:4px;font-size:13px;color:#ccc;cursor:pointer;user-select:none;transition:color .1s;}
-.card-likes:hover{color:var(--red);}
-.card-likes.liked{color:var(--red);font-weight:700;}
-.card-comments{font-size:12px;color:#888;display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 4px;border-radius:6px;transition:background .1s;}
-.card-comments:hover{background:var(--blue-light);}
-.unread-dot{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-left:3px;}
-.admin-reply-band{background:#e8f5f0;border-top:2px solid #5aad88;padding:6px 11px;font-size:12px;font-weight:500;color:#2e7a55;}
-.admin-reply-band strong{display:block;font-size:10px;margin-bottom:1px;opacity:.65;}
-.card-del-btn{font-size:10px;color:#ddd;background:none;border:none;cursor:pointer;padding:2px 5px;border-radius:4px;transition:all .1s;}
-.card-del-btn:hover{color:var(--red);background:#fee;}
-.new-card-input-wrap{background:#fff;border-radius:8px;border:1.5px dashed var(--blue);padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
-.new-card-input-wrap textarea{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:500;padding:0;border:none;outline:none;resize:none;background:transparent;color:var(--ink);line-height:1.6;min-height:44px;}
-.new-card-btns{display:flex;gap:6px;justify-content:flex-end;align-items:center;flex-wrap:wrap;}
-.img-upload-label{font-size:12px;font-weight:700;padding:3px 10px;cursor:pointer;border-radius:20px;border:1.5px solid rgba(0,0,0,0.18);background:#fff;color:#555;white-space:nowrap;}
-.add-col-wrap{flex:0 0 auto;display:flex;align-items:flex-start;}
-.add-col-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.6);color:#aaa;border:2px dashed #ccc;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.add-col-btn:hover{background:#fff;border-color:var(--blue);color:var(--blue);}
+/* ===== NEW CARD ===== */
+.new-card-wrap{background:#fff;border-radius:10px;border:1.5px dashed rgba(58,111,168,0.4);padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
+.new-card-wrap textarea{font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:500;padding:0;border:none;outline:none;resize:none;background:transparent;color:var(--ink);line-height:1.6;min-height:44px;overflow:hidden;}
+.nc-btns{display:flex;gap:5px;justify-content:space-between;align-items:center;flex-wrap:wrap;}
+.nc-hint{font-size:10px;color:#aaa;font-weight:500;}
+.nc-btn{font-family:'M PLUS Rounded 1c',sans-serif;font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;cursor:pointer;border:1.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;transition:all .1s;}
+.nc-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.img-add-label{font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;border-radius:16px;border:1.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;white-space:nowrap;}
 
-/* コメントモーダル */
-.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;z-index:300;padding:16px;}
-.modal-wrap.open{display:flex;}
-.detail-box{background:var(--surface);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);width:100%;max-width:380px;overflow:hidden;border:var(--border);max-height:90vh;display:flex;flex-direction:column;}
-.detail-header{background:#3a3a3a;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.detail-header span{font-size:15px;font-weight:800;}
-.detail-body{padding:16px;overflow-y:auto;}
-.detail-text{font-size:15px;font-weight:500;line-height:1.8;white-space:pre-wrap;margin-bottom:6px;}
-.detail-ts{font-size:11px;color:#bbb;font-style:italic;margin-bottom:10px;}
-.stamp-picker{display:flex;gap:6px;flex-wrap:wrap;padding:6px 0 4px;}
-.stamp-btn{font-size:22px;cursor:pointer;border:none;background:transparent;border-radius:6px;padding:2px 4px;transition:transform .1s;}
-.stamp-btn:hover{transform:scale(1.3);}
-.comment-list{border-top:var(--border);margin-top:8px;padding-top:8px;max-height:160px;overflow-y:auto;}
-.comment-item{font-size:13px;font-weight:500;padding:5px 0;border-bottom:1px solid #f5f3ee;color:#555;line-height:1.5;}
-.comment-item .ct{font-size:10px;color:#bbb;font-style:italic;}
-.add-comment{display:flex;gap:6px;margin-top:8px;}
-.add-comment input{flex:1;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:500;padding:7px 10px;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;background:#fff;color:var(--ink);}
-.add-comment input:focus{outline:none;border-color:var(--blue);}
+/* ===== ADD COL ===== */
+.add-col-wrap{flex:0 0 auto;display:flex;align-items:flex-start;padding-top:4px;}
+.add-col-btn{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,0.65);color:#aaa;border:2px dashed rgba(0,0,0,0.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.add-col-btn:hover{background:#fff;border-color:var(--blue);color:var(--blue);box-shadow:0 4px 12px rgba(58,111,168,0.2);}
+.empty-hint{font-size:12px;color:#ccc;text-align:center;padding:14px 0;font-style:italic;}
 
-/* ADMIN */
-.admin-scroll{overflow-x:auto;padding:0 14px 16px;}
+/* ===== ADMIN ===== */
+#screen-admin{background:linear-gradient(135deg,#e8f4fd 0%,#fce8f3 50%,#e8f5e9 100%);min-height:100vh;}
+.admin-scroll{overflow-x:auto;padding:0 20px 20px;}
 .admin-cols-wrap{display:flex;gap:12px;min-width:max-content;}
-.admin-col-card{width:260px;background:var(--surface);border-radius:var(--radius);border:var(--border);box-shadow:var(--shadow);overflow:hidden;flex-shrink:0;}
-.admin-col-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:var(--border);cursor:pointer;user-select:none;transition:background .15s;}
-.admin-col-card-header:hover{background:var(--surface2);}
+.admin-col-card{width:260px;background:rgba(255,255,255,0.82);backdrop-filter:blur(8px);border-radius:16px;border:1px solid rgba(255,255,255,0.9);box-shadow:var(--shadow);overflow:hidden;flex-shrink:0;}
+.admin-col-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:var(--border);cursor:pointer;user-select:none;transition:background .15s;}
+.admin-col-hdr:hover{background:rgba(255,255,255,0.6);}
 .admin-col-left{display:flex;flex-direction:column;gap:2px;}
-.admin-col-num{font-family:'M PLUS Rounded 1c',sans-serif;font-size:17px;font-weight:800;color:var(--ink);}
+.admin-col-num{font-size:17px;font-weight:800;color:var(--ink);}
 .admin-col-name{font-size:12px;font-weight:700;color:#888;}
 .admin-col-right{display:flex;align-items:center;gap:8px;}
 .admin-col-count{font-size:12px;color:#aaa;font-weight:500;}
-.acc-chevron{font-size:13px;color:#aaa;transition:transform .2s;display:inline-block;}
+.acc-chevron{font-size:13px;color:#aaa;transition:transform .2s;}
 .acc-chevron.open{transform:rotate(180deg);}
 .admin-col-body{display:none;padding:10px 12px 12px;}
 .admin-col-body.open{display:block;}
-.admin-card-item{border-radius:8px;border:var(--border);padding:8px 10px;margin-bottom:8px;font-size:12px;}
+.admin-card-item{border-radius:10px;border:var(--border);padding:8px 10px;margin-bottom:8px;font-size:12px;background:#fff;}
 .admin-card-section{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:3px;}
 .admin-card-text{line-height:1.5;white-space:pre-wrap;font-weight:500;color:var(--ink);}
 .admin-card-meta{font-size:10px;color:#aaa;margin-top:3px;font-style:italic;}
 .reply-box{margin-top:6px;}
-.reply-box textarea{width:100%;font-size:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:500;padding:5px 8px;border:1.5px solid rgba(0,0,0,0.15);border-radius:7px;background:#fff;resize:none;color:var(--ink);}
+.reply-box textarea{width:100%;font-size:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:500;padding:5px 8px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:#fff;resize:none;color:var(--ink);}
 .reply-box textarea:focus{outline:none;border-color:var(--blue);}
 .reply-sent{background:#e8f5f0;border-radius:6px;padding:4px 8px;font-size:11px;margin-top:3px;font-style:italic;color:var(--green);font-weight:500;}
 .trash-section{margin-top:10px;padding-top:10px;border-top:1.5px dashed #f0b030;}
@@ -156,36 +199,81 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .trash-card-item{background:#fffbe6;border:1.5px solid #f0d080;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:12px;}
 .trash-card-text{color:#555;font-weight:500;line-height:1.4;white-space:pre-wrap;}
 .trash-card-meta{font-size:10px;color:#aaa;margin-top:3px;font-style:italic;}
-.tab-row{display:flex;gap:0;padding:0 14px;margin-bottom:12px;border-bottom:var(--border);}
-.tab{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:700;padding:8px 16px;cursor:pointer;color:#aaa;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;}
+@keyframes flashUpdate{0%{background:rgba(58,111,168,0.15);}100%{background:transparent;}}
+.rt-updated{animation:flashUpdate 1s ease-out;}
+.tab-row{display:flex;gap:0;padding:0 20px;margin-bottom:12px;border-bottom:var(--border);background:rgba(255,255,255,0.5);}
+.tab{font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:700;padding:10px 18px;cursor:pointer;color:#aaa;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;}
 .tab.active{color:var(--blue);border-bottom:2px solid var(--blue);}
-.settings-section{padding:0 14px;margin-bottom:20px;}
+.settings-section{padding:0 20px;margin-bottom:20px;}
 .settings-section h2{font-size:14px;font-weight:800;margin-bottom:8px;border-left:4px solid var(--blue);padding-left:8px;}
 .name-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
-.name-item{background:var(--surface2);border-radius:8px;border:var(--border);padding:8px;}
+.name-item{background:rgba(255,255,255,0.8);border-radius:10px;border:var(--border);padding:8px;}
 .name-item label{color:#999;display:block;margin-bottom:4px;font-size:10px;font-weight:700;}
-.name-item input{width:100%;font-size:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:500;padding:4px 7px;border:1.5px solid rgba(0,0,0,0.12);border-radius:6px;background:#fff;color:var(--ink);}
-.name-item input:focus{outline:none;border-color:var(--blue);}
+.name-item input{width:100%;font-size:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:500;padding:4px 7px;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;background:#fff;color:var(--ink);}
 .pw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
-.pw-item{background:var(--surface2);border-radius:8px;border:var(--border);padding:8px;}
+.pw-item{background:rgba(255,255,255,0.8);border-radius:10px;border:var(--border);padding:8px;}
 .pw-item label{color:#999;display:block;margin-bottom:4px;font-size:10px;font-weight:700;}
-.empty-hint{font-size:12px;color:#ccc;text-align:center;padding:16px 0;font-style:italic;font-weight:500;}
+
+/* ===== MODAL ===== */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.25);backdrop-filter:blur(4px);align-items:center;justify-content:center;z-index:300;padding:16px;}
+.modal-wrap.open{display:flex;}
+.detail-box{background:#fff;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,0.15);width:100%;max-width:380px;overflow:hidden;border:var(--border);max-height:90vh;display:flex;flex-direction:column;}
+.detail-header{background:#3a3a3a;color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.detail-header span{font-size:15px;font-weight:800;}
+.detail-body{padding:16px;overflow-y:auto;}
+.stamp-picker{display:flex;gap:6px;flex-wrap:wrap;padding:6px 0 4px;}
+.stamp-btn{font-size:22px;cursor:pointer;border:none;background:transparent;border-radius:6px;padding:2px 4px;transition:transform .1s;}
+.stamp-btn:hover{transform:scale(1.3);}
+.comment-list{border-top:var(--border);margin-top:8px;padding-top:8px;max-height:160px;overflow-y:auto;}
+.comment-item{font-size:13px;font-weight:500;padding:5px 0;border-bottom:1px solid #f5f3ee;color:#555;line-height:1.5;}
+.comment-item .ct{font-size:10px;color:#bbb;font-style:italic;}
+.add-comment{display:flex;gap:6px;margin-top:8px;}
+.add-comment input{flex:1;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:500;padding:7px 10px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:#fff;color:var(--ink);}
+.add-comment input:focus{outline:none;border-color:var(--blue);}
+::-webkit-scrollbar{height:4px;width:4px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.04);}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px;}
 @media print{.no-print{display:none!important;}#screen-board{display:block!important;}.board-inner{height:auto;}.cols-scroll{overflow:visible;flex-wrap:wrap;height:auto;}.padlet-col{break-inside:avoid;margin-bottom:12px;}.col-cards{overflow:visible;max-height:none;}}
 </style>
+</head>
+<body>
 
 <!-- HOME -->
-<div id="screen-home" class="screen active nb-bg">
-  <div class="top-bar no-print"><div class="logo">📓 成長ノート</div><button class="btn sm" onclick="openAdminLogin()">管理者</button></div>
-  <div class="sem-tabs no-print" id="semTabs"><button class="sem-tab active" onclick="switchSem(0)">1学期</button><button class="sem-tab" onclick="switchSem(1)">2学期</button><button class="sem-tab" onclick="switchSem(2)">3学期</button></div>
-  <div class="grid-wrap"><div class="number-grid" id="numGrid"></div></div>
+<div id="screen-home" class="screen active home-wrap">
+  <div class="top-bar no-print">
+    <div class="logo">📓 成長ノート</div>
+    <div class="top-right">
+      <span class="sync-badge" id="syncIndicator">✓ 同期済み</span>
+      <button class="btn sm" onclick="openAdminLogin()">管理者</button>
+    </div>
+  </div>
+  <div class="sem-tabs no-print" id="semTabs">
+    <button class="sem-tab active" onclick="switchSem(0)">1学期</button>
+    <button class="sem-tab" onclick="switchSem(1)">2学期</button>
+    <button class="sem-tab" onclick="switchSem(2)">3学期</button>
+  </div>
+  <div class="num-grid" id="numGrid"></div>
 </div>
+
+<!-- PW -->
 <div id="screen-pw" class="screen nb-bg">
-  <div class="top-bar"><div class="logo">📓 成長ノート</div></div>
-  <div class="center-wrap"><div class="login-card"><h3>番号 <span id="pw-num"></span></h3><p>パスワードを入力してください</p><input class="field" type="password" id="pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()"/><div class="err" id="pw-err"></div><div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">戻る</button><button class="btn primary" onclick="checkPw()" style="flex:1">開く</button></div></div></div>
+  <div class="center-wrap"><div class="login-card">
+    <h3>番号 <span id="pw-num"></span></h3><p>パスワードを入力してください</p>
+    <input class="field" type="password" id="pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div class="err" id="pw-err"></div>
+    <div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">戻る</button><button class="btn primary" onclick="checkPw()" style="flex:1">開く</button></div>
+  </div></div>
 </div>
+
+<!-- SET PW -->
 <div id="screen-setpw" class="screen nb-bg">
-  <div class="top-bar"><div class="logo">📓 成長ノート</div></div>
-  <div class="center-wrap"><div class="login-card"><h3>パスワードを設定</h3><p>初回ログインです。自分だけのパスワードに変えてください。</p><input class="field" type="password" id="newpw-input" placeholder="新しいパスワード"/><input class="field" type="password" id="newpw-confirm" placeholder="もう一度入力" onkeydown="if(event.key==='Enter')saveNewPw()"/><div class="err" id="newpw-err"></div><div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">キャンセル</button><button class="btn primary" onclick="saveNewPw()" style="flex:1">設定する</button></div></div></div>
+  <div class="center-wrap"><div class="login-card">
+    <h3>パスワードを設定</h3><p>初回ログインです。自分だけのパスワードに変えてください。</p>
+    <input class="field" type="password" id="newpw-input" placeholder="新しいパスワード"/>
+    <input class="field" type="password" id="newpw-confirm" placeholder="もう一度入力" onkeydown="if(event.key==='Enter')saveNewPw()"/>
+    <div class="err" id="newpw-err"></div>
+    <div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">キャンセル</button><button class="btn primary" onclick="saveNewPw()" style="flex:1">設定する</button></div>
+  </div></div>
 </div>
 
 <!-- BOARD -->
@@ -198,9 +286,10 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
           <div class="board-num-badge" id="board-num-badge"></div>
           <div class="board-name-block"><div class="board-user-name" id="board-user-name"></div><span class="board-sem-badge" id="board-sem-badge"></span></div>
         </div>
-        <div class="board-header-controls">
-          <div class="bg-ctrl">
-            <span class="bg-ctrl-label">🎨</span>
+        <div class="board-ctrl">
+          <span class="sync-badge show" id="boardSyncIndicator">✓ 同期済み</span>
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:11px;font-weight:700;color:#aaa;">🎨</span>
             <div id="boardBgSwatches" style="display:flex;gap:4px;align-items:center;"></div>
             <input type="color" id="boardBgCustom" class="bg-custom-color" title="カスタム色"/>
             <label class="bg-img-label">🖼 画像<input type="file" id="bgImgFile" accept="image/*" style="display:none;" onchange="handleBgImg(this)"/></label>
@@ -210,8 +299,11 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
         </div>
       </div>
     </div>
-    <div id="restoreBannerWrap" style="display:none;padding:8px 16px 0;">
-      <div class="restore-banner"><div class="restore-banner-text" id="restoreBannerText"></div><div class="restore-banner-btns"><button class="btn success sm" onclick="restoreCard()">↩ 元に戻す</button><button class="btn sm" onclick="dismissTrash()">✕</button></div></div>
+    <div id="restoreBannerWrap" style="display:none;">
+      <div class="restore-bar">
+        <div class="restore-bar-text" id="restoreBannerText"></div>
+        <div class="restore-bar-btns"><button class="btn success sm" onclick="restoreCard()">↩ 元に戻す</button><button class="btn sm" onclick="dismissTrash()">✕</button></div>
+      </div>
     </div>
     <div class="cols-scroll" id="colsScroll"></div>
   </div>
@@ -219,17 +311,34 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 
 <!-- ADMIN LOGIN -->
 <div id="screen-adminlogin" class="screen nb-bg">
-  <div class="top-bar"><div class="logo">📓 成長ノート</div></div>
-  <div class="center-wrap"><div class="login-card"><h3>管理者ログイン</h3><p>管理者パスワードを入力してください</p><input class="field" type="password" id="admin-pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkAdminPw()"/><div class="err" id="admin-err"></div><div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">戻る</button><button class="btn primary" onclick="checkAdminPw()" style="flex:1">ログイン</button></div></div></div>
+  <div class="center-wrap"><div class="login-card">
+    <h3>管理者ログイン</h3><p>管理者パスワードを入力してください</p>
+    <input class="field" type="password" id="admin-pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkAdminPw()"/>
+    <div class="err" id="admin-err"></div>
+    <div class="btn-row"><button class="btn" onclick="goHome()" style="flex:1">戻る</button><button class="btn primary" onclick="checkAdminPw()" style="flex:1">ログイン</button></div>
+  </div></div>
 </div>
 
 <!-- ADMIN -->
-<div id="screen-admin" class="screen nb-bg">
-  <div class="top-bar"><div class="logo">🗂 管理者画面</div><button class="btn danger sm" onclick="goHome()">ログアウト</button></div>
-  <div class="sem-tabs" id="adminSemTabs"><button class="sem-tab active" id="asem0" onclick="switchAdminSem(0)">1学期</button><button class="sem-tab" id="asem1" onclick="switchAdminSem(1)">2学期</button><button class="sem-tab" id="asem2" onclick="switchAdminSem(2)">3学期</button></div>
-  <div class="tab-row" style="margin-top:12px;"><button class="tab active" id="tab-view" onclick="switchTab('view')">一覧</button><button class="tab" id="tab-settings" onclick="switchTab('settings')">設定</button></div>
+<div id="screen-admin" class="screen">
+  <div class="top-bar no-print" style="background:rgba(255,255,255,0.72);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.07);">
+    <div class="logo">🗂 管理者画面</div>
+    <div class="top-right">
+      <span class="sync-badge show" id="adminSyncIndicator">🔴 未接続</span>
+      <button class="btn danger sm" onclick="goHome()">ログアウト</button>
+    </div>
+  </div>
+  <div class="sem-tabs" id="adminSemTabs" style="padding:14px 20px 0;background:transparent;">
+    <button class="sem-tab active" id="asem0" onclick="switchAdminSem(0)">1学期</button>
+    <button class="sem-tab" id="asem1" onclick="switchAdminSem(1)">2学期</button>
+    <button class="sem-tab" id="asem2" onclick="switchAdminSem(2)">3学期</button>
+  </div>
+  <div class="tab-row" style="margin-top:12px;">
+    <button class="tab active" id="tab-view" onclick="switchTab('view')">一覧</button>
+    <button class="tab" id="tab-settings" onclick="switchTab('settings')">設定</button>
+  </div>
   <div id="admin-view">
-    <div style="padding:0 14px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
+    <div style="padding:0 20px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn sm" id="filterBtn" onclick="toggleFilter()">投稿ありのみ</button>
       <button class="btn sm" onclick="toggleAllAcc()" id="toggleAllBtn">すべて開く</button>
     </div>
@@ -243,15 +352,15 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
   </div>
 </div>
 
-<!-- コメントモーダル（スタンプ・コメント用） -->
+<!-- コメントモーダル -->
 <div id="detail-modal" class="modal-wrap">
   <div class="detail-box">
     <div class="detail-header"><span id="detail-col-name"></span><button class="btn sm" onclick="closeDetail()" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);">✕ 閉じる</button></div>
     <div class="detail-body">
-      <img id="detail-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px;display:none;"/>
+      <img id="detail-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:none;"/>
       <div id="detail-stamps" style="font-size:20px;margin-bottom:6px;"></div>
-      <div class="detail-text" id="detail-text"></div>
-      <div class="detail-ts" id="detail-ts"></div>
+      <div id="detail-text" style="font-size:15px;font-weight:500;line-height:1.8;white-space:pre-wrap;margin-bottom:6px;color:var(--ink);"></div>
+      <div id="detail-ts" style="font-size:11px;color:#bbb;font-style:italic;margin-bottom:10px;"></div>
       <div id="detail-reply"></div>
       <div class="stamp-picker" id="stamp-picker"></div>
       <div class="comment-list" id="comment-list"></div>
@@ -260,75 +369,227 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
   </div>
 </div>
 
-<script>
-const TOTAL=35,DEFAULT_PW='1234',DEFAULT_ADMIN_PW='admin123';
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAzKQS778ZclsWFixdCDENM3DHx2DjVsPE",
+  authDomain: "seichou-note.firebaseapp.com",
+  databaseURL: "https://seichou-note-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "seichou-note",
+  storageBucket: "seichou-note.firebasestorage.app",
+  messagingSenderId: "449292901706",
+  appId: "1:449292901706:web:9d191612e4ba4f4cd235b3"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const TOTAL=35, DEFAULT_PW='1234', DEFAULT_ADMIN_PW='admin123';
 const CARD_COLORS=['white','yellow','blue','green','pink'];
 const CARD_HEX={white:'#ffffff',yellow:'#fffde7',blue:'#e8f0fb',green:'#e8f5e9',pink:'#fce4ec'};
 const CARD_CLASS={white:'cc-white',yellow:'cc-yellow',blue:'cc-blue',green:'cc-green',pink:'cc-pink'};
+const CARD_GRADS={white:'gi-white',yellow:'gi-yellow',blue:'gi-blue',green:'gi-green',pink:'gi-pink'};
+const CARD_EMOJIS={white:'📝',yellow:'⭐',blue:'🌊',green:'🌱',pink:'🌸'};
 const STAMPS=['👍','❤️','😊','🌟','💪','🎉','🤔','😢','🔥','✨'];
 const BG_PRESETS=[{label:'クリーム',c:'#f7f5f0'},{label:'空色',c:'#e8f4fd'},{label:'若草',c:'#edf7ed'},{label:'桜',c:'#fdeef3'},{label:'薄紫',c:'#f3eef8'},{label:'ミント',c:'#e8f6f3'},{label:'レモン',c:'#fdfbe8'},{label:'白',c:'#f9f9f9'}];
 
-function loadState(){try{const s=localStorage.getItem('seichou_v12');if(s)return JSON.parse(s);}catch(e){}return null;}
-function initState(){
-  const saved=loadState();
-  if(saved){for(let sem=0;sem<3;sem++){for(let i=1;i<=TOTAL;i++){if(!saved.sems[sem][i])saved.sems[sem][i]={cols:[{id:uid(),title:'メモ',cards:[]}],bg:'#f7f5f0',bgImg:null,trash:null};if(!('trash' in saved.sems[sem][i]))saved.sems[sem][i].trash=null;}}return saved;}
-  const sems=[0,1,2].map(()=>{const b={};for(let i=1;i<=TOTAL;i++)b[i]={cols:[{id:uid(),title:'メモ',cards:[]}],bg:'#f7f5f0',bgImg:null,trash:null};return b;});
-  return{adminPw:DEFAULT_ADMIN_PW,defaultPw:DEFAULT_PW,numPws:{},numNames:{},sems,lastSeen:{}};
-}
+let state=null;
+let currentNum=null,currentSem=0,adminSem=0,showUnreadOnly=false,allAccOpen=false,detailTarget=null;
+let boardListener=null,settingsListener=null,adminBoardListeners=[];
+let saveTimer=null;
+
 function uid(){return Math.random().toString(36).slice(2,9)}
 function nowTs(){const d=new Date();return(d.getMonth()+1)+'月'+d.getDate()+'日';}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
-let state=initState();
-function save(){try{localStorage.setItem('seichou_v12',JSON.stringify(state));}catch(e){}}
+function autoResize(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
 
-let currentNum=null,currentSem=0,adminSem=0,showUnreadOnly=false;
-let detailTarget=null,allAccOpen=false;
-let dragSrcColId=null,dragSrcCardId=null;
+function showSync(saving,elem){
+  const el=elem||document.getElementById('syncIndicator');
+  if(!el)return;
+  if(saving){el.textContent='⏳ 保存中...';el.className='sync-badge show saving';}
+  else{el.textContent='✓ 同期済み';el.className='sync-badge show';}
+}
+
+async function saveSettings(){
+  showSync(true);
+  await set(ref(db,'settings'),{adminPw:state.adminPw,defaultPw:state.defaultPw,numPws:state.numPws||{},numNames:state.numNames||{}});
+  showSync(false);
+}
+async function saveBoardData(sem,num){
+  showSync(true,document.getElementById('boardSyncIndicator'));
+  await set(ref(db,`sems/${sem}/${num}`),state.sems[sem][num]);
+  showSync(false,document.getElementById('boardSyncIndicator'));
+}
+function autoSave(sem,num){
+  showSync(true,document.getElementById('boardSyncIndicator'));
+  if(saveTimer)clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{ await saveBoardData(sem,num); },300);
+}
+
+async function loadInitialState(){
+  const snap=await get(ref(db,'settings'));
+  if(snap.exists()){
+    const s=snap.val();
+    state={adminPw:s.adminPw||DEFAULT_ADMIN_PW,defaultPw:s.defaultPw||DEFAULT_PW,numPws:s.numPws||{},numNames:s.numNames||{},sems:[{},{},{}],lastSeen:{}};
+  } else {
+    state={adminPw:DEFAULT_ADMIN_PW,defaultPw:DEFAULT_PW,numPws:{},numNames:{},sems:[{},{},{}],lastSeen:{}};
+    await saveSettings();
+  }
+  for(let sem=0;sem<3;sem++){state.sems[sem]={};for(let i=1;i<=TOTAL;i++)state.sems[sem][i]={cols:[{id:uid(),title:'メモ',cards:[]}],bg:'#f7f5f0',bgImg:null,trash:null};}
+  const semsSnap=await get(ref(db,'sems'));
+  if(semsSnap.exists()){const sd=semsSnap.val();for(let sem=0;sem<3;sem++){if(sd[sem])for(let i=1;i<=TOTAL;i++)if(sd[sem][i])state.sems[sem][i]=sd[sem][i];}}
+  buildGrid();show('home');
+}
+
+function listenToBoard(sem,num){
+  if(boardListener){boardListener();boardListener=null;}
+  boardListener=onValue(ref(db,`sems/${sem}/${num}`),(snap)=>{
+    if(!snap.exists())return;
+    const newData=snap.val();
+    if(!document.querySelector('.rich-card.editing')){
+      state.sems[sem][num]=newData;
+      if(currentNum===num&&currentSem===sem){renderCols();updateRestoreBanner();}
+    }
+  });
+}
+
+function listenToAdminSem(sem){
+  adminBoardListeners.forEach(u=>u());adminBoardListeners=[];
+  const ind=document.getElementById('adminSyncIndicator');
+  if(ind){ind.textContent='🟡 接続中...';ind.style.cssText='display:inline-block;background:#fff8e1;color:#f57f17;border:1px solid #ffe082;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;';}
+  let first=true;
+  for(let i=1;i<=TOTAL;i++){
+    const num=i;
+    const unsub=onValue(ref(db,`sems/${sem}/${num}`),(snap)=>{
+      if(!snap.exists())return;
+      const prev=state.sems[sem][num].cols.flatMap(c=>c.cards).length;
+      state.sems[sem][num]=snap.val();
+      const now=state.sems[sem][num].cols.flatMap(c=>c.cards).length;
+      if(document.getElementById('screen-admin').classList.contains('active')&&adminSem===sem){
+        updateAdminColCard(sem,num,now!==prev);
+      }
+      if(first&&ind){first=false;ind.textContent='🟢 リアルタイム同期中';ind.style.cssText='display:inline-block;background:#e8f5e9;color:#3a7a55;border:1px solid #b2dfdb;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;';}
+    });
+    adminBoardListeners.push(unsub);
+  }
+}
+
+function updateAdminColCard(sem,num,flash){
+  const wrap=document.getElementById('adminColsWrap');if(!wrap)return;
+  const existing=wrap.querySelector(`[data-num="${num}"]`);
+  if(!existing){renderAdminCols();return;}
+  const brd=state.sems[sem][num];
+  const allCards=brd.cols.flatMap(c=>c.cards);
+  if(showUnreadOnly&&allCards.length===0&&!brd.trash){existing.style.display='none';return;}
+  existing.style.display='';
+  const countEl=existing.querySelector('.admin-col-count');if(countEl)countEl.textContent=allCards.length+'件';
+  const right=existing.querySelector('.admin-col-right');
+  const oldT=right.querySelector('.trash-mark');if(oldT)oldT.remove();
+  if(brd.trash){const tb=document.createElement('span');tb.className='trash-mark';tb.style.fontSize='13px';tb.textContent='🗑';right.insertBefore(tb,right.querySelector('.acc-chevron'));}
+  const body=existing.querySelector('.admin-col-body');
+  if(body&&body.classList.contains('open')){rebuildAdminColBody(body,sem,num,brd);if(flash){existing.classList.remove('rt-updated');void existing.offsetWidth;existing.classList.add('rt-updated');}}
+}
+
+function rebuildAdminColBody(body,sem,num,brd){
+  body.innerHTML='';
+  const allCards=brd.cols.flatMap(c=>c.cards);
+  if(allCards.length===0&&!brd.trash){const e=document.createElement('div');e.className='empty-hint';e.textContent='投稿なし';body.appendChild(e);return;}
+  brd.cols.forEach(col=>{col.cards.forEach(card=>{
+    const cc=CARD_CLASS[card.color||'white']||'cc-white';
+    const ac=document.createElement('div');ac.className='admin-card-item '+cc;
+    if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:80px;object-fit:cover;border-radius:8px;margin-bottom:6px;';ac.appendChild(im);}
+    const sec=document.createElement('div');sec.className='admin-card-section';sec.textContent=col.title;ac.appendChild(sec);
+    if(card.text){const t=document.createElement('div');t.className='admin-card-text';t.textContent=card.text;ac.appendChild(t);}
+    if(card.stamps&&card.stamps.length){const s=document.createElement('div');s.style.fontSize='13px';s.textContent=card.stamps.join('');ac.appendChild(s);}
+    const m=document.createElement('div');m.className='admin-card-meta';m.textContent='📅'+card.ts+' · ♥'+(card.likes||0)+' 💬'+(card.comments?card.comments.length:0);ac.appendChild(m);
+    if(card.reply){const rs=document.createElement('div');rs.className='reply-sent';rs.textContent='返信済: '+card.reply;ac.appendChild(rs);}
+    else{const rb=document.createElement('div');rb.className='reply-box';const rta=document.createElement('textarea');rta.rows=2;rta.placeholder='返信を入力...';const sb2=document.createElement('button');sb2.className='btn primary sm';sb2.style.marginTop='4px';sb2.textContent='送信';sb2.onclick=async()=>{const txt=rta.value.trim();if(!txt)return;card.reply=txt;card.replyTs=Date.now();await saveBoardData(adminSem,num);};rb.appendChild(rta);rb.appendChild(sb2);ac.appendChild(rb);}
+    body.appendChild(ac);
+  });});
+  if(brd.trash){
+    const ts=document.createElement('div');ts.className='trash-section';
+    const tt=document.createElement('div');tt.className='trash-section-title';tt.textContent='🗑 削除済み（復元可能）';ts.appendChild(tt);
+    const t=brd.trash;const tc=document.createElement('div');tc.className='trash-card-item';
+    if(t.card.img){const im=document.createElement('img');im.src=t.card.img;im.style.cssText='width:100%;max-height:60px;object-fit:cover;border-radius:6px;margin-bottom:4px;';tc.appendChild(im);}
+    if(t.card.text){const tx=document.createElement('div');tx.className='trash-card-text';tx.textContent=t.card.text;tc.appendChild(tx);}
+    const tm=document.createElement('div');tm.className='trash-card-meta';tm.textContent='📅'+t.card.ts;tc.appendChild(tm);
+    const rb=document.createElement('button');rb.className='btn success sm';rb.style.marginTop='5px';rb.textContent='↩ 復元する';
+    rb.onclick=async()=>{if(!confirm((state.numNames[num]||num+'番')+'のカードを復元しますか？'))return;const col=brd.cols.find(c=>c.id===t.colId)||brd.cols[0];col.cards.push({...t.card,id:uid()});brd.trash=null;await saveBoardData(adminSem,num);};
+    const cb=document.createElement('button');cb.className='btn danger sm';cb.style.cssText='margin-top:5px;margin-left:6px;';cb.textContent='完全削除';
+    cb.onclick=async()=>{if(confirm('完全に削除します。元に戻せません。')){brd.trash=null;await saveBoardData(adminSem,num);}};
+    tc.appendChild(rb);tc.appendChild(cb);ts.appendChild(tc);body.appendChild(ts);
+  }
+}
+
+function listenToSettings(){
+  if(settingsListener){settingsListener();settingsListener=null;}
+  settingsListener=onValue(ref(db,'settings'),(snap)=>{
+    if(!snap.exists())return;
+    const s=snap.val();state.adminPw=s.adminPw||DEFAULT_ADMIN_PW;state.defaultPw=s.defaultPw||DEFAULT_PW;state.numPws=s.numPws||{};state.numNames=s.numNames||{};buildGrid();
+  });
+}
 
 function getPw(n){return state.numPws[n]||state.defaultPw||DEFAULT_PW}
 function isInitPw(n,v){return v===(state.defaultPw||DEFAULT_PW)&&!state.numPws[n]}
 function getUnread(n,sem){const ls=state.lastSeen[sem+'_'+n]||0;return state.sems[sem][n].cols.flatMap(c=>c.cards).filter(c=>c.replyTs&&c.replyTs>ls).length;}
 function hasContent(n){return state.sems[currentSem][n].cols.some(c=>c.cards.length>0)}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
-function goHome(){show('home');buildGrid();}
+
+function goHome(){
+  if(boardListener){boardListener();boardListener=null;}
+  adminBoardListeners.forEach(u=>u());adminBoardListeners=[];
+  show('home');buildGrid();
+}
 function switchSem(i){currentSem=i;document.querySelectorAll('#semTabs .sem-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));buildGrid();}
 
 function buildGrid(){
+  if(!state)return;
   const g=document.getElementById('numGrid');g.innerHTML='';
   for(let i=1;i<=TOTAL;i++){
-    const b=document.createElement('button');b.className='num-btn'+(hasContent(i)?' has-content':'');
-    const ns=document.createElement('div');ns.className='num-number';ns.textContent=i;b.appendChild(ns);
-    const ni=document.createElement('input');ni.className='num-name-input';ni.type='text';ni.value=state.numNames[i]||'';ni.placeholder='名前を入力';ni.maxLength=12;
+    const b=document.createElement('div');b.className='num-card'+(hasContent(i)?' has-post':'');
+    const ns=document.createElement('div');ns.className='num-num';ns.textContent=i;b.appendChild(ns);
+    const ni=document.createElement('input');ni.className='name-inp';ni.type='text';ni.value=state.numNames[i]||'';ni.placeholder='名前を入力';ni.maxLength=12;
     ni.addEventListener('click',e=>e.stopPropagation());ni.addEventListener('focus',e=>e.stopPropagation());
-    ni.addEventListener('input',()=>{const v=ni.value.trim();if(v)state.numNames[i]=v;else delete state.numNames[i];save();});
+    ni.addEventListener('input',()=>{const v=ni.value.trim();if(v)state.numNames[i]=v;else delete state.numNames[i];saveSettings();});
     ni.addEventListener('keydown',e=>{if(e.key==='Enter')ni.blur();e.stopPropagation();});
     b.appendChild(ni);
-    const u=getUnread(i,currentSem);if(u>0){const ub=document.createElement('div');ub.className='unread-badge';ub.textContent=u;b.appendChild(ub);}
+    const u=getUnread(i,currentSem);if(u>0){const ub=document.createElement('div');ub.className='ubadge';ub.textContent=u;b.appendChild(ub);}
     if(hasContent(i)){const d=document.createElement('span');d.className='dot';b.appendChild(d);}
     b.onclick=()=>openNum(i);g.appendChild(b);
   }
 }
 
 function openNum(n){currentNum=n;document.getElementById('pw-num').textContent=n+(state.numNames[n]?' ('+state.numNames[n]+')':'');document.getElementById('pw-input').value='';document.getElementById('pw-err').textContent='';show('pw');setTimeout(()=>document.getElementById('pw-input').focus(),100);}
-function checkPw(){const v=document.getElementById('pw-input').value;if(v===getPw(currentNum)){if(isInitPw(currentNum,v)){document.getElementById('newpw-input').value='';document.getElementById('newpw-confirm').value='';document.getElementById('newpw-err').textContent='';show('setpw');setTimeout(()=>document.getElementById('newpw-input').focus(),100);}else openBoard(currentNum);}else document.getElementById('pw-err').textContent='パスワードが違います';}
-function saveNewPw(){const p1=document.getElementById('newpw-input').value,p2=document.getElementById('newpw-confirm').value;if(!p1){document.getElementById('newpw-err').textContent='パスワードを入力してください';return;}if(p1!==p2){document.getElementById('newpw-err').textContent='パスワードが一致しません';return;}state.numPws[currentNum]=p1;save();openBoard(currentNum);}
+window.checkPw=function(){const v=document.getElementById('pw-input').value;if(v===getPw(currentNum)){if(isInitPw(currentNum,v)){document.getElementById('newpw-input').value='';document.getElementById('newpw-confirm').value='';document.getElementById('newpw-err').textContent='';show('setpw');setTimeout(()=>document.getElementById('newpw-input').focus(),100);}else openBoard(currentNum);}else document.getElementById('pw-err').textContent='パスワードが違います';}
+window.saveNewPw=function(){const p1=document.getElementById('newpw-input').value,p2=document.getElementById('newpw-confirm').value;if(!p1){document.getElementById('newpw-err').textContent='パスワードを入力してください';return;}if(p1!==p2){document.getElementById('newpw-err').textContent='パスワードが一致しません';return;}state.numPws[currentNum]=p1;saveSettings();openBoard(currentNum);}
 
 function openBoard(n){
   currentNum=n;
   document.getElementById('board-num-badge').textContent=n+'番';
   document.getElementById('board-user-name').textContent=state.numNames[n]||'（名前未設定）';
   document.getElementById('board-sem-badge').textContent=(currentSem+1)+'学期';
-  state.lastSeen[currentSem+'_'+n]=Date.now();save();
+  state.lastSeen[currentSem+'_'+n]=Date.now();
   buildBoardBgPicker();applyBoardBg();updateRestoreBanner();renderCols();show('board');
+  listenToBoard(currentSem,n);
 }
 function getBrd(){return state.sems[currentSem][currentNum];}
-function applyBoardBg(){const cs=document.getElementById('colsScroll');const brd=getBrd();if(brd.bgImg){cs.style.backgroundImage='url("'+brd.bgImg+'")';cs.style.backgroundSize='cover';cs.style.backgroundPosition='center';cs.style.backgroundColor='';document.getElementById('bgImgClear').style.display='inline-block';}else{cs.style.backgroundImage='linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px)';cs.style.backgroundSize='100% 28px';cs.style.backgroundColor=brd.bg||'#f7f5f0';document.getElementById('bgImgClear').style.display='none';}}
-function buildBoardBgPicker(){const wrap=document.getElementById('boardBgSwatches');wrap.innerHTML='';const brd=getBrd();const cur=brd.bg||'#f7f5f0';BG_PRESETS.forEach(p=>{const s=document.createElement('div');s.className='bg-swatch'+(p.c===cur&&!brd.bgImg?' sel':'');s.style.background=p.c;s.title=p.label;s.onclick=()=>{brd.bg=p.c;brd.bgImg=null;save();applyBoardBg();wrap.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));s.classList.add('sel');document.getElementById('boardBgCustom').value=p.c;};wrap.appendChild(s);});const cc=document.getElementById('boardBgCustom');cc.value=cur;cc.oninput=()=>{brd.bg=cc.value;brd.bgImg=null;save();applyBoardBg();wrap.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));};document.getElementById('bgImgFile').value='';}
-function handleBgImg(input){if(!input.files[0])return;const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const maxW=1200,maxH=900;let w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW;}if(h>maxH){w=w*maxH/h;h=maxH;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',0.7);getBrd().bgImg=data;getBrd().bg='#f7f5f0';save();applyBoardBg();document.getElementById('boardBgSwatches').querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));};img.src=e.target.result;};r.readAsDataURL(input.files[0]);}
-function clearBgImg(){getBrd().bgImg=null;save();applyBoardBg();document.getElementById('bgImgFile').value='';}
-function updateRestoreBanner(){const brd=getBrd();const wrap=document.getElementById('restoreBannerWrap');if(brd.trash){const preview=brd.trash.card.text?brd.trash.card.text.slice(0,25)+(brd.trash.card.text.length>25?'…':''):'(画像カード)';document.getElementById('restoreBannerText').textContent='🗑 「'+preview+'」を削除しました';wrap.style.display='block';}else{wrap.style.display='none';}}
-function restoreCard(){const brd=getBrd();if(!brd.trash)return;const{colId,card}=brd.trash;const col=brd.cols.find(c=>c.id===colId)||brd.cols[0];col.cards.push(card);brd.trash=null;save();updateRestoreBanner();renderCols();}
-function dismissTrash(){getBrd().trash=null;save();updateRestoreBanner();}
+function applyBoardBg(){
+  const cs=document.getElementById('colsScroll');const brd=getBrd();
+  if(brd.bgImg){cs.style.backgroundImage='url("'+brd.bgImg+'")';cs.style.backgroundSize='cover';cs.style.backgroundPosition='center';cs.style.backgroundColor='';document.getElementById('bgImgClear').style.display='inline-block';}
+  else{cs.style.backgroundImage='none';cs.style.backgroundColor=brd.bg||'#f7f5f0';document.getElementById('bgImgClear').style.display='none';}
+}
+function buildBoardBgPicker(){
+  const wrap=document.getElementById('boardBgSwatches');wrap.innerHTML='';const brd=getBrd();const cur=brd.bg||'#f7f5f0';
+  BG_PRESETS.forEach(p=>{const s=document.createElement('div');s.className='bg-swatch'+(p.c===cur&&!brd.bgImg?' sel':'');s.style.background=p.c;s.title=p.label;s.onclick=()=>{brd.bg=p.c;brd.bgImg=null;autoSave(currentSem,currentNum);applyBoardBg();wrap.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));s.classList.add('sel');document.getElementById('boardBgCustom').value=p.c;};wrap.appendChild(s);});
+  const cc=document.getElementById('boardBgCustom');cc.value=cur;cc.oninput=()=>{brd.bg=cc.value;brd.bgImg=null;autoSave(currentSem,currentNum);applyBoardBg();wrap.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));};
+  document.getElementById('bgImgFile').value='';
+}
+window.handleBgImg=function(input){if(!input.files[0])return;const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const maxW=1200,maxH=900;let w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW;}if(h>maxH){w=w*maxH/h;h=maxH;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',0.7);getBrd().bgImg=data;getBrd().bg='#f7f5f0';autoSave(currentSem,currentNum);applyBoardBg();document.getElementById('boardBgSwatches').querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('sel'));};img.src=e.target.result;};r.readAsDataURL(input.files[0]);}
+window.clearBgImg=function(){getBrd().bgImg=null;autoSave(currentSem,currentNum);applyBoardBg();document.getElementById('bgImgFile').value='';}
+function updateRestoreBanner(){const brd=getBrd();const wrap=document.getElementById('restoreBannerWrap');if(brd&&brd.trash){const p=brd.trash.card.text?brd.trash.card.text.slice(0,25)+(brd.trash.card.text.length>25?'…':''):'(画像カード)';document.getElementById('restoreBannerText').textContent='🗑 「'+p+'」を削除しました';wrap.style.display='block';}else wrap.style.display='none';}
+window.restoreCard=function(){const brd=getBrd();if(!brd.trash)return;const{colId,card}=brd.trash;const col=brd.cols.find(c=>c.id===colId)||brd.cols[0];col.cards.push(card);brd.trash=null;autoSave(currentSem,currentNum);updateRestoreBanner();renderCols();}
+window.dismissTrash=function(){getBrd().trash=null;autoSave(currentSem,currentNum);updateRestoreBanner();}
 
 function readImg(file){return new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(file);});}
 function compressImg(dataUrl,maxW,maxH,q){return new Promise(res=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW;}if(h>maxH){w=w*maxH/h;h=maxH;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',q));};img.src=dataUrl;});}
@@ -339,17 +600,17 @@ function renderCols(){
   const brd=getBrd();
   brd.cols.forEach((col,ci)=>{
     const colEl=document.createElement('div');colEl.className='padlet-col';
-    const hdr=document.createElement('div');hdr.className='col-header';
-    const tw=document.createElement('div');tw.style.cssText='flex:1;display:flex;align-items:center;gap:4px;';
-    const disp=document.createElement('div');disp.className='col-title-display';disp.textContent=col.title;
-    const inp=document.createElement('input');inp.className='col-title-input';inp.value=col.title;inp.type='text';
+    const hdr=document.createElement('div');hdr.className='col-hdr';
+    const tw=document.createElement('div');tw.style.cssText='flex:1;display:flex;align-items:center;gap:4px;overflow:hidden;';
+    const disp=document.createElement('div');disp.className='col-title-disp';disp.textContent=col.title;
+    const inp=document.createElement('input');inp.className='col-title-inp';inp.value=col.title;inp.type='text';
     disp.onclick=()=>{disp.style.display='none';inp.style.display='block';inp.focus();inp.select();};
-    inp.onblur=()=>{const v=inp.value.trim()||col.title;col.title=v;disp.textContent=v;inp.style.display='none';disp.style.display='';save();};
+    inp.onblur=()=>{const v=inp.value.trim()||col.title;col.title=v;disp.textContent=v;inp.style.display='none';disp.style.display='';autoSave(currentSem,currentNum);};
     inp.onkeydown=(e)=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){inp.value=col.title;inp.blur();}};
     tw.appendChild(disp);tw.appendChild(inp);
     const addBtn=document.createElement('button');addBtn.className='col-add-btn';addBtn.textContent='+';addBtn.onclick=()=>showNewCardInput(col,cardsEl);
     const delBtn=document.createElement('button');delBtn.className='col-del-btn';delBtn.textContent='✕';
-    delBtn.onclick=()=>{if(brd.cols.length<=1){alert('セクションは最低1つ必要です');return;}if(!confirm('「'+col.title+'」を削除しますか？\nカードも全て削除されます。'))return;brd.cols.splice(ci,1);save();renderCols();};
+    delBtn.onclick=()=>{if(brd.cols.length<=1){alert('セクションは最低1つ必要です');return;}if(!confirm('「'+col.title+'」を削除しますか？'))return;brd.cols.splice(ci,1);autoSave(currentSem,currentNum);renderCols();};
     hdr.appendChild(tw);hdr.appendChild(addBtn);hdr.appendChild(delBtn);colEl.appendChild(hdr);
     const cardsEl=document.createElement('div');cardsEl.className='col-cards';
     if(col.cards.length===0){const e=document.createElement('div');e.className='empty-hint';e.textContent='＋ボタンから追加しよう';cardsEl.appendChild(e);}
@@ -358,157 +619,111 @@ function renderCols(){
   });
   const aw=document.createElement('div');aw.className='add-col-wrap';
   const ab=document.createElement('button');ab.className='add-col-btn';ab.textContent='+';ab.title='セクションを追加';
-  ab.onclick=()=>{getBrd().cols.push({id:uid(),title:'新しいセクション',cards:[]});save();renderCols();};
+  ab.onclick=()=>{getBrd().cols.push({id:uid(),title:'新しいセクション',cards:[]});autoSave(currentSem,currentNum);renderCols();};
   aw.appendChild(ab);wrap.appendChild(aw);
 }
 
-// ★ カードをクリックしたらインライン編集モードに
 function makeCard(col,c){
   const cc=CARD_CLASS[c.color||'white']||'cc-white';
-  const card=document.createElement('div');card.className='padlet-card '+cc;
-  card.draggable=true;
-  card.addEventListener('dragstart',e=>{if(card.classList.contains('editing'))return;dragSrcColId=col.id;dragSrcCardId=c.id;card.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-  card.addEventListener('dragend',()=>{card.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));});
-  card.addEventListener('dragover',e=>{e.preventDefault();card.classList.add('drag-over');});
-  card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
-  card.addEventListener('drop',e=>{e.preventDefault();card.classList.remove('drag-over');if(dragSrcCardId===c.id)return;const brd=getBrd();const srcCol=brd.cols.find(x=>x.id===dragSrcColId);const idx=srcCol.cards.findIndex(x=>x.id===dragSrcCardId);if(idx<0)return;const[moved]=srcCol.cards.splice(idx,1);const tgtCol=brd.cols.find(x=>x.id===col.id);const tgtIdx=tgtCol.cards.findIndex(x=>x.id===c.id);tgtCol.cards.splice(tgtIdx,0,moved);save();renderCols();});
+  const grad=CARD_GRADS[c.color||'white']||'gi-white';
+  const emoji=CARD_EMOJIS[c.color||'white']||'📝';
+  const card=document.createElement('div');card.className='rich-card';
 
-  // ★ 画像
-  if(c.img){const img=document.createElement('img');img.src=c.img;img.className='card-img';card.appendChild(img);}
+  // 画像エリア（写真があればimg、なければグラデーション）
+  if(c.img){const img=document.createElement('img');img.src=c.img;img.className='card-img-area';card.appendChild(img);}
+  else{const gd=document.createElement('div');gd.className='card-img-grad '+grad;gd.textContent=emoji;card.appendChild(gd);}
 
-  // ★ 本文（表示モード）
-  const bodyView=document.createElement('div');bodyView.className='card-body';
-  if(c.text)bodyView.innerHTML='<div class="card-text">'+esc(c.text)+'</div>';
-  card.appendChild(bodyView);
+  // ボディ
+  const body=document.createElement('div');body.className='card-body '+cc;
+  if(c.text)body.innerHTML='<div class="card-text">'+esc(c.text)+'</div>';
+  if(c.stamps&&c.stamps.length>0){const sd=document.createElement('div');sd.className='card-stamps';sd.textContent=c.stamps.join(' ');body.appendChild(sd);}
+  const ts=document.createElement('div');ts.className='card-ts';ts.textContent='📅 '+c.ts;body.appendChild(ts);
+  card.appendChild(body);
 
-  if(c.stamps&&c.stamps.length>0){const sd=document.createElement('div');sd.className='card-stamps';sd.textContent=c.stamps.join(' ');card.appendChild(sd);}
-  const tsEl=document.createElement('div');tsEl.className='card-ts';tsEl.textContent='📅 '+c.ts;card.appendChild(tsEl);
   if(c.reply){const rb=document.createElement('div');rb.className='admin-reply-band';rb.innerHTML='<strong>先生より</strong>'+esc(c.reply);card.appendChild(rb);}
 
-  // フッター（いいね・コメント・削除）
-  const footer=document.createElement('div');footer.className='card-footer';
-  const likes=document.createElement('div');likes.className='card-likes'+(c.liked?' liked':'');
-  likes.innerHTML='<span>'+(c.liked?'♥':'♡')+'</span><span style="font-size:12px;margin-left:2px;">'+(c.likes||0)+'</span>';
-  likes.onclick=(e)=>{e.stopPropagation();c.liked=!c.liked;c.likes=(c.likes||0)+(c.liked?1:-1);save();renderCols();};
-  const comEl=document.createElement('div');comEl.className='card-comments';
+  const footer=document.createElement('div');footer.className='card-footer '+cc;
+  const likes=document.createElement('button');likes.className='like-btn'+(c.liked?' liked':'');
+  likes.innerHTML=(c.liked?'♥ ':'♡ ')+(c.likes||0);
+  likes.onclick=(e)=>{e.stopPropagation();c.liked=!c.liked;c.likes=(c.likes||0)+(c.liked?1:-1);autoSave(currentSem,currentNum);renderCols();};
   const unread=c.reply&&c.replyTs&&c.replyTs>(state.lastSeen[currentSem+'_'+currentNum]||0);
+  const comEl=document.createElement('button');comEl.className='comment-btn';
   comEl.innerHTML='💬 '+(c.comments?c.comments.length:0)+(unread?'<span class="unread-dot"></span>':'');
-  comEl.title='コメント・スタンプを見る';
   comEl.onclick=(e)=>{e.stopPropagation();openDetail(col,c);};
-  const delBtn=document.createElement('button');delBtn.className='card-del-btn';delBtn.textContent='🗑';delBtn.title='削除';
-  delBtn.onclick=(e)=>{
-    e.stopPropagation();
-    if(!confirm('このカードを削除しますか？'))return;
-    const brd=getBrd();const idx=col.cards.findIndex(x=>x.id===c.id);if(idx<0)return;
-    const[removed]=col.cards.splice(idx,1);brd.trash={colId:col.id,card:removed};
-    save();updateRestoreBanner();renderCols();
-  };
+  const delBtn=document.createElement('button');delBtn.className='del-btn';delBtn.textContent='🗑';
+  delBtn.onclick=(e)=>{e.stopPropagation();if(!confirm('このカードを削除しますか？'))return;const brd=getBrd();const idx=col.cards.findIndex(x=>x.id===c.id);if(idx<0)return;const[removed]=col.cards.splice(idx,1);brd.trash={colId:col.id,card:removed};autoSave(currentSem,currentNum);updateRestoreBanner();renderCols();};
   footer.appendChild(likes);footer.appendChild(comEl);footer.appendChild(delBtn);
   card.appendChild(footer);
 
-  // ★ クリックで編集モードに切替
-  card.onclick=(e)=>{
-    // いいね・コメント・削除ボタンはスキップ
-    if(e.target.closest('.card-likes')||e.target.closest('.card-comments')||e.target.closest('.card-del-btn'))return;
-    if(card.classList.contains('editing'))return;
-    enterEditMode(card,col,c,bodyView);
-  };
-
+  // クリックで編集モード
+  card.onclick=(e)=>{if(e.target.closest('.like-btn')||e.target.closest('.comment-btn')||e.target.closest('.del-btn'))return;if(card.classList.contains('editing'))return;enterEditMode(card,col,c,body);};
   return card;
 }
 
-function enterEditMode(card,col,c,bodyView){
-  card.classList.add('editing');
-  card.draggable=false;
-  bodyView.style.display='none';
-
-  // インライン編集エリアを挿入
-  const editArea=document.createElement('div');editArea.className='card-edit-area';
-
-  // カラーピッカー
-  const cp=document.createElement('div');cp.className='color-picker';
-  let editColor=c.color||'white';
-  buildColorPicker(cp,editColor,(nc)=>{
-    editColor=nc;
-    // カードの背景色をリアルタイム更新
-    CARD_COLORS.forEach(cl=>card.classList.remove(CARD_CLASS[cl]));
-    card.classList.add(CARD_CLASS[nc]||'cc-white');
+function enterEditMode(card,col,c,bodyEl){
+  card.classList.add('editing');bodyEl.style.display='none';
+  const editArea=document.createElement('div');editArea.className='card-edit-area';editArea.style.background=CARD_HEX[c.color||'white']||'#fff';
+  const cp=document.createElement('div');cp.className='color-picker';let editColor=c.color||'white';
+  buildColorPicker(cp,editColor,(nc)=>{editColor=nc;editArea.style.background=CARD_HEX[nc]||'#fff';// グラデーション更新
+    const gd=card.querySelector('.card-img-grad');if(gd){gd.className='card-img-grad '+(CARD_GRADS[nc]||'gi-white');gd.textContent=CARD_EMOJIS[nc]||'📝';}
+    const footer=card.querySelector('.card-footer');if(footer)footer.className='card-footer '+(CARD_CLASS[nc]||'cc-white');
   });
   editArea.appendChild(cp);
-
-  // テキストエリア
-  const ta=document.createElement('textarea');ta.rows=4;ta.value=c.text||'';ta.placeholder='ここに入力...';
+  const ta=document.createElement('textarea');ta.value=c.text||'';ta.placeholder='入力… Enter で保存 / Shift+Enter で改行';
   ta.onclick=(e)=>e.stopPropagation();
-  editArea.appendChild(ta);
+  ta.addEventListener('input',()=>autoResize(ta));
+  ta.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();e.stopPropagation();doSaveEdit(card,col,c,editArea,bodyEl,ta,editColor,newImgData,imgChanged);}if(e.key==='Escape'){e.stopPropagation();exitEditMode(card,col,c,editArea,bodyEl);}});
+  editArea.appendChild(ta);setTimeout(()=>{autoResize(ta);ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},30);
 
-  // 画像変更行
-  const imgRow=document.createElement('div');imgRow.className='card-edit-row';
-  const imgLabel=document.createElement('label');imgLabel.className='card-edit-img-label';imgLabel.textContent='📷 画像を変更';
-  const imgFile=document.createElement('input');imgFile.type='file';imgFile.accept='image/*';imgFile.style.display='none';
   let newImgData=c.img||null,imgChanged=false;
+  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
+  const imgLabel=document.createElement('label');imgLabel.className='img-change-label';imgLabel.textContent='📷 画像を変更';
+  const imgFile=document.createElement('input');imgFile.type='file';imgFile.accept='image/*';imgFile.style.display='none';
   imgFile.onchange=async()=>{if(!imgFile.files[0])return;const raw=await readImg(imgFile.files[0]);newImgData=await compressImg(raw,600,400,0.75);imgChanged=true;
-    // 画像プレビュー更新
-    let existing=card.querySelector('.card-img');if(existing){existing.src=newImgData;}else{const ni=document.createElement('img');ni.src=newImgData;ni.className='card-img';card.insertBefore(ni,card.firstChild);}
+    const existing=card.querySelector('.card-img-area,.card-img-grad');
+    const ni=document.createElement('img');ni.src=newImgData;ni.className='card-img-area';
+    if(existing)existing.replaceWith(ni);else card.insertBefore(ni,editArea);
   };
   imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);
-  if(c.img){const clearImgBtn=document.createElement('button');clearImgBtn.className='btn sm';clearImgBtn.textContent='画像を削除';clearImgBtn.onclick=(e)=>{e.stopPropagation();newImgData=null;imgChanged=true;const ei=card.querySelector('.card-img');if(ei)ei.remove();clearImgBtn.style.display='none';};imgRow.appendChild(clearImgBtn);}
+  if(c.img){const clrBtn=document.createElement('button');clrBtn.className='e-btn';clrBtn.textContent='画像を削除';clrBtn.onclick=(e)=>{e.stopPropagation();newImgData=null;imgChanged=true;const ei=card.querySelector('.card-img-area');if(ei){const gd=document.createElement('div');gd.className='card-img-grad '+(CARD_GRADS[editColor]||'gi-white');gd.textContent=CARD_EMOJIS[editColor]||'📝';ei.replaceWith(gd);}clrBtn.style.display='none';};imgRow.appendChild(clrBtn);}
   editArea.appendChild(imgRow);
 
-  // 保存・キャンセルボタン
-  const btnRow=document.createElement('div');btnRow.className='card-edit-row';
-  const btns=document.createElement('div');btns.className='card-edit-btns';
-  const cancelBtn=document.createElement('button');cancelBtn.className='btn sm';cancelBtn.textContent='キャンセル';
-  cancelBtn.onclick=(e)=>{e.stopPropagation();exitEditMode(card,col,c,editArea,bodyView);};
-  const saveBtn=document.createElement('button');saveBtn.className='btn primary sm';saveBtn.textContent='保存';
-  saveBtn.onclick=(e)=>{
-    e.stopPropagation();
-    const txt=ta.value.trim();
-    c.text=txt;c.color=editColor;
-    if(imgChanged)c.img=newImgData;
-    save();renderCols();
-  };
-  btns.appendChild(cancelBtn);btns.appendChild(saveBtn);btnRow.appendChild(btns);
-  editArea.appendChild(btnRow);
-
-  // bodyViewの直後に挿入
-  bodyView.after(editArea);
-  setTimeout(()=>ta.focus(),50);
-
-  // Escキーでキャンセル
-  ta.addEventListener('keydown',(e)=>{if(e.key==='Escape'){e.stopPropagation();exitEditMode(card,col,c,editArea,bodyView);}});
+  const btnRow=document.createElement('div');btnRow.className='edit-btns-row';
+  const hint=document.createElement('span');hint.className='edit-hint';hint.textContent='Enter で保存';
+  const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';cancelBtn.onclick=(e)=>{e.stopPropagation();exitEditMode(card,col,c,editArea,bodyEl);};
+  const saveBtn=document.createElement('button');saveBtn.className='e-btn primary';saveBtn.textContent='保存';saveBtn.onclick=(e)=>{e.stopPropagation();doSaveEdit(card,col,c,editArea,bodyEl,ta,editColor,newImgData,imgChanged);};
+  btnRow.appendChild(hint);btnRow.appendChild(cancelBtn);btnRow.appendChild(saveBtn);editArea.appendChild(btnRow);
+  bodyEl.after(editArea);
 }
-
-function exitEditMode(card,col,c,editArea,bodyView){
-  card.classList.remove('editing');
-  card.draggable=true;
-  // カード色を元に戻す
-  CARD_COLORS.forEach(cl=>card.classList.remove(CARD_CLASS[cl]));
-  card.classList.add(CARD_CLASS[c.color||'white']||'cc-white');
-  editArea.remove();
-  bodyView.style.display='';
-}
+function doSaveEdit(card,col,c,editArea,bodyEl,ta,editColor,newImgData,imgChanged){c.text=ta.value;c.color=editColor;if(imgChanged)c.img=newImgData;autoSave(currentSem,currentNum);renderCols();}
+function exitEditMode(card,col,c,editArea,bodyEl){card.classList.remove('editing');editArea.remove();bodyEl.style.display='';}
 
 function showNewCardInput(col,cardsEl){
-  const ex=cardsEl.querySelector('.new-card-input-wrap');if(ex){ex.querySelector('textarea').focus();return;}
+  const ex=cardsEl.querySelector('.new-card-wrap');if(ex){ex.querySelector('textarea').focus();return;}
   const hint=cardsEl.querySelector('.empty-hint');if(hint)hint.remove();
   let selColor='white',imgData=null;
-  const wrap=document.createElement('div');wrap.className='new-card-input-wrap';
-  const cp=document.createElement('div');cp.className='color-picker';buildColorPicker(cp,'white',(c)=>{selColor=c;});
-  const ta=document.createElement('textarea');ta.rows=3;ta.placeholder='ここに入力...';
-  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;align-items:center;gap:6px;margin-top:2px;';
-  const imgLabel=document.createElement('label');imgLabel.className='img-upload-label';imgLabel.textContent='📷 画像を追加';
+  const wrap=document.createElement('div');wrap.className='new-card-wrap';
+  const cp=document.createElement('div');cp.className='color-picker';
+  buildColorPicker(cp,'white',(c)=>{selColor=c;wrap.style.background=CARD_HEX[c]||'#fff';});
+  wrap.appendChild(cp);
+  const ta=document.createElement('textarea');ta.placeholder='入力… Enter で追加 / Shift+Enter で改行';
+  ta.addEventListener('input',()=>autoResize(ta));
+  ta.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doAdd();}if(e.key==='Escape')wrap.remove();});
+  wrap.appendChild(ta);
+  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:6px;align-items:center;';
+  const imgLabel=document.createElement('label');imgLabel.className='img-add-label';imgLabel.textContent='📷 画像を追加';
   const imgFile=document.createElement('input');imgFile.type='file';imgFile.accept='image/*';imgFile.style.display='none';
-  const imgPrev=document.createElement('img');imgPrev.style.cssText='max-width:100%;max-height:80px;object-fit:cover;border-radius:6px;margin-top:4px;display:none;';
+  const imgPrev=document.createElement('img');imgPrev.style.cssText='max-width:100%;max-height:70px;object-fit:cover;border-radius:8px;margin-top:4px;display:none;';
   imgFile.onchange=async()=>{if(!imgFile.files[0])return;const raw=await readImg(imgFile.files[0]);imgData=await compressImg(raw,600,400,0.75);imgPrev.src=imgData;imgPrev.style.display='block';};
-  imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);
-  const btns=document.createElement('div');btns.className='new-card-btns';
-  const cancelBtn=document.createElement('button');cancelBtn.className='btn sm';cancelBtn.textContent='キャンセル';
+  imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);wrap.appendChild(imgRow);wrap.appendChild(imgPrev);
+  const btns=document.createElement('div');btns.className='nc-btns';
+  const nchint=document.createElement('span');nchint.className='nc-hint';nchint.textContent='Enter で追加';
+  const cancelBtn=document.createElement('button');cancelBtn.className='nc-btn';cancelBtn.textContent='キャンセル';
   cancelBtn.onclick=()=>{wrap.remove();if(col.cards.length===0){const e=document.createElement('div');e.className='empty-hint';e.textContent='＋ボタンから追加しよう';cardsEl.insertBefore(e,cardsEl.firstChild);}};
-  const addBtn=document.createElement('button');addBtn.className='btn primary sm';addBtn.textContent='追加';
-  addBtn.onclick=()=>{const txt=ta.value.trim();if(!txt&&!imgData)return;col.cards.push({id:uid(),text:txt,ts:nowTs(),likes:0,liked:false,comments:[],reply:'',replyTs:0,color:selColor,stamps:[],img:imgData||null});save();renderCols();};
-  btns.appendChild(cancelBtn);btns.appendChild(addBtn);
-  wrap.appendChild(cp);wrap.appendChild(ta);wrap.appendChild(imgRow);wrap.appendChild(imgPrev);wrap.appendChild(btns);
-  cardsEl.appendChild(wrap);ta.focus();
+  const addBtn=document.createElement('button');addBtn.className='nc-btn primary';addBtn.textContent='追加';addBtn.onclick=()=>doAdd();
+  function doAdd(){const txt=ta.value;if(!txt.trim()&&!imgData)return;col.cards.push({id:uid(),text:txt,ts:nowTs(),likes:0,liked:false,comments:[],reply:'',replyTs:0,color:selColor,stamps:[],img:imgData||null});autoSave(currentSem,currentNum);renderCols();}
+  btns.appendChild(nchint);btns.appendChild(cancelBtn);btns.appendChild(addBtn);wrap.appendChild(btns);
+  cardsEl.appendChild(wrap);setTimeout(()=>ta.focus(),30);
 }
 
 function openDetail(col,c){
@@ -524,67 +739,40 @@ function openDetail(col,c){
   renderComments(c);document.getElementById('comment-input').value='';
   document.getElementById('detail-modal').classList.add('open');
 }
-function addStamp(s){if(!detailTarget)return;const col=getBrd().cols.find(c=>c.id===detailTarget.colId);if(!col)return;const card=col.cards.find(c=>c.id===detailTarget.cardId);if(!card)return;if(!card.stamps)card.stamps=[];card.stamps.push(s);save();document.getElementById('detail-stamps').textContent=card.stamps.join(' ');renderCols();}
+function addStamp(s){if(!detailTarget)return;const col=getBrd().cols.find(c=>c.id===detailTarget.colId);if(!col)return;const card=col.cards.find(c=>c.id===detailTarget.cardId);if(!card)return;if(!card.stamps)card.stamps=[];card.stamps.push(s);autoSave(currentSem,currentNum);document.getElementById('detail-stamps').textContent=card.stamps.join(' ');renderCols();}
 function renderComments(c){const cl=document.getElementById('comment-list');cl.innerHTML='';if(!c.comments||c.comments.length===0){cl.innerHTML='<div class="empty-hint">コメントなし</div>';return;}c.comments.forEach(cm=>{const el=document.createElement('div');el.className='comment-item';el.innerHTML=esc(cm.text)+'<span class="ct"> — '+cm.ts+'</span>';cl.appendChild(el);});}
-function addComment(){if(!detailTarget)return;const txt=document.getElementById('comment-input').value.trim();if(!txt)return;const col=getBrd().cols.find(c=>c.id===detailTarget.colId);if(!col)return;const card=col.cards.find(c=>c.id===detailTarget.cardId);if(!card)return;if(!card.comments)card.comments=[];card.comments.push({id:uid(),text:txt,ts:nowTs()});save();renderComments(card);renderCols();document.getElementById('comment-input').value='';}
-function closeDetail(){document.getElementById('detail-modal').classList.remove('open');detailTarget=null;}
+window.addComment=function(){if(!detailTarget)return;const txt=document.getElementById('comment-input').value.trim();if(!txt)return;const col=getBrd().cols.find(c=>c.id===detailTarget.colId);if(!col)return;const card=col.cards.find(c=>c.id===detailTarget.cardId);if(!card)return;if(!card.comments)card.comments=[];card.comments.push({id:uid(),text:txt,ts:nowTs()});autoSave(currentSem,currentNum);renderComments(card);renderCols();document.getElementById('comment-input').value='';}
+window.closeDetail=function(){document.getElementById('detail-modal').classList.remove('open');detailTarget=null;}
 
-function openAdminLogin(){document.getElementById('admin-pw-input').value='';document.getElementById('admin-err').textContent='';show('adminlogin');setTimeout(()=>document.getElementById('admin-pw-input').focus(),100);}
-function checkAdminPw(){if(document.getElementById('admin-pw-input').value===(state.adminPw||DEFAULT_ADMIN_PW))openAdmin();else document.getElementById('admin-err').textContent='パスワードが違います';}
-function openAdmin(){adminSem=0;updateAdminSemTabs();switchTab('view');show('admin');}
-function switchAdminSem(i){adminSem=i;updateAdminSemTabs();const a=document.querySelector('.tab.active');if(a)switchTab(a.id.replace('tab-',''));}
+window.openAdminLogin=function(){document.getElementById('admin-pw-input').value='';document.getElementById('admin-err').textContent='';show('adminlogin');setTimeout(()=>document.getElementById('admin-pw-input').focus(),100);}
+window.checkAdminPw=function(){if(document.getElementById('admin-pw-input').value===(state.adminPw||DEFAULT_ADMIN_PW))openAdmin();else document.getElementById('admin-err').textContent='パスワードが違います';}
+function openAdmin(){adminSem=0;updateAdminSemTabs();switchTab('view');show('admin');listenToSettings();listenToAdminSem(adminSem);}
+window.switchAdminSem=function(i){adminSem=i;updateAdminSemTabs();const a=document.querySelector('.tab.active');if(a)switchTab(a.id.replace('tab-',''));listenToAdminSem(adminSem);}
 function updateAdminSemTabs(){[0,1,2].forEach(i=>document.getElementById('asem'+i).classList.toggle('active',i===adminSem));}
 function switchTab(t){['view','settings'].forEach(id=>{document.getElementById('tab-'+id).classList.toggle('active',id===t);const el=document.getElementById('admin-'+id);if(el)el.style.display=id===t?'block':'none';});if(t==='view')renderAdminCols();if(t==='settings')buildSettings();}
-function toggleFilter(){showUnreadOnly=!showUnreadOnly;document.getElementById('filterBtn').textContent=showUnreadOnly?'全件表示':'投稿ありのみ';renderAdminCols();}
-function toggleAllAcc(){allAccOpen=!allAccOpen;document.querySelectorAll('.admin-col-body').forEach(b=>b.classList.toggle('open',allAccOpen));document.querySelectorAll('.acc-chevron').forEach(c=>c.classList.toggle('open',allAccOpen));document.getElementById('toggleAllBtn').textContent=allAccOpen?'すべて閉じる':'すべて開く';}
+window.switchTab=switchTab;
+window.toggleFilter=function(){showUnreadOnly=!showUnreadOnly;document.getElementById('filterBtn').textContent=showUnreadOnly?'全件表示':'投稿ありのみ';renderAdminCols();}
+window.toggleAllAcc=function(){allAccOpen=!allAccOpen;document.querySelectorAll('.admin-col-body').forEach(b=>b.classList.toggle('open',allAccOpen));document.querySelectorAll('.acc-chevron').forEach(c=>c.classList.toggle('open',allAccOpen));document.getElementById('toggleAllBtn').textContent=allAccOpen?'すべて閉じる':'すべて開く';}
 
 function renderAdminCols(){
-  const wrap=document.getElementById('adminColsWrap');wrap.innerHTML='';
-  const sb=state.sems[adminSem];
+  const wrap=document.getElementById('adminColsWrap');wrap.innerHTML='';const sb=state.sems[adminSem];
   for(let i=1;i<=TOTAL;i++){
     const brd=sb[i];const allCards=brd.cols.flatMap(c=>c.cards);
     if(showUnreadOnly&&allCards.length===0&&!brd.trash)continue;
-    const colCard=document.createElement('div');colCard.className='admin-col-card';
-    const hdr=document.createElement('div');hdr.className='admin-col-card-header';
+    const colCard=document.createElement('div');colCard.className='admin-col-card';colCard.setAttribute('data-num',i);
+    const hdr=document.createElement('div');hdr.className='admin-col-hdr';
     const left=document.createElement('div');left.className='admin-col-left';
     const numEl=document.createElement('div');numEl.className='admin-col-num';numEl.textContent='No.'+i;
     const nameEl=document.createElement('div');nameEl.className='admin-col-name';nameEl.textContent=state.numNames[i]||'（名前未設定）';
     left.appendChild(numEl);left.appendChild(nameEl);
     const right=document.createElement('div');right.className='admin-col-right';
     const countEl=document.createElement('div');countEl.className='admin-col-count';countEl.textContent=allCards.length+'件';
-    if(brd.trash){const tb=document.createElement('span');tb.style.fontSize='13px';tb.textContent='🗑';right.appendChild(tb);}
+    if(brd.trash){const tb=document.createElement('span');tb.className='trash-mark';tb.style.fontSize='13px';tb.textContent='🗑';right.appendChild(tb);}
     const chevron=document.createElement('span');chevron.className='acc-chevron';chevron.textContent='▼';
     right.appendChild(countEl);right.appendChild(chevron);
     hdr.appendChild(left);hdr.appendChild(right);
     const body=document.createElement('div');body.className='admin-col-body';
-    if(allCards.length===0&&!brd.trash){const empty=document.createElement('div');empty.className='empty-hint';empty.textContent='投稿なし';body.appendChild(empty);}
-    else{
-      brd.cols.forEach(col=>{col.cards.forEach(card=>{
-        const cc=CARD_CLASS[card.color||'white']||'cc-white';
-        const ac=document.createElement('div');ac.className='admin-card-item '+cc;
-        if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:70px;object-fit:cover;border-radius:6px;margin-bottom:5px;';ac.appendChild(im);}
-        const secEl=document.createElement('div');secEl.className='admin-card-section';secEl.textContent=col.title;ac.appendChild(secEl);
-        if(card.text){const txtEl=document.createElement('div');txtEl.className='admin-card-text';txtEl.textContent=card.text;ac.appendChild(txtEl);}
-        if(card.stamps&&card.stamps.length){const stEl=document.createElement('div');stEl.style.fontSize='13px';stEl.textContent=card.stamps.join('');ac.appendChild(stEl);}
-        const metaEl=document.createElement('div');metaEl.className='admin-card-meta';metaEl.textContent='📅'+card.ts+' · ♥'+(card.likes||0)+' 💬'+(card.comments?card.comments.length:0);ac.appendChild(metaEl);
-        if(card.reply){const rs=document.createElement('div');rs.className='reply-sent';rs.textContent='返信済: '+card.reply;ac.appendChild(rs);}
-        else{const rb=document.createElement('div');rb.className='reply-box';const rta=document.createElement('textarea');rta.rows=2;rta.placeholder='返信を入力...';const sb2=document.createElement('button');sb2.className='btn primary sm';sb2.style.marginTop='4px';sb2.textContent='送信';sb2.onclick=()=>{const txt=rta.value.trim();if(!txt)return;card.reply=txt;card.replyTs=Date.now();save();renderAdminCols();};rb.appendChild(rta);rb.appendChild(sb2);ac.appendChild(rb);}
-        body.appendChild(ac);
-      });});
-      if(brd.trash){
-        const trashSec=document.createElement('div');trashSec.className='trash-section';
-        const trashTitle=document.createElement('div');trashTitle.className='trash-section-title';trashTitle.textContent='🗑 削除済み（復元可能）';trashSec.appendChild(trashTitle);
-        const t=brd.trash;const tc=document.createElement('div');tc.className='trash-card-item';
-        if(t.card.img){const im=document.createElement('img');im.src=t.card.img;im.style.cssText='width:100%;max-height:60px;object-fit:cover;border-radius:5px;margin-bottom:4px;';tc.appendChild(im);}
-        if(t.card.text){const tt=document.createElement('div');tt.className='trash-card-text';tt.textContent=t.card.text;tc.appendChild(tt);}
-        const tm=document.createElement('div');tm.className='trash-card-meta';tm.textContent='📅'+t.card.ts;tc.appendChild(tm);
-        const rb2=document.createElement('button');rb2.className='btn success sm';rb2.style.marginTop='5px';rb2.textContent='↩ 復元する';
-        rb2.onclick=()=>{if(!confirm((state.numNames[i]||i+'番')+'のカードを復元しますか？'))return;const col=brd.cols.find(c=>c.id===t.colId)||brd.cols[0];col.cards.push({...t.card,id:uid()});brd.trash=null;save();renderAdminCols();};
-        const cb=document.createElement('button');cb.className='btn danger sm';cb.style.cssText='margin-top:5px;margin-left:6px;';cb.textContent='完全削除';
-        cb.onclick=()=>{if(confirm('完全に削除します。元に戻せません。')){brd.trash=null;save();renderAdminCols();}};
-        tc.appendChild(rb2);tc.appendChild(cb);trashSec.appendChild(tc);body.appendChild(trashSec);
-      }
-    }
+    rebuildAdminColBody(body,adminSem,i,brd);
     hdr.onclick=()=>{body.classList.toggle('open');chevron.classList.toggle('open');};
     colCard.appendChild(hdr);colCard.appendChild(body);wrap.appendChild(colCard);
   }
@@ -593,11 +781,15 @@ function renderAdminCols(){
 function buildSettings(){
   document.getElementById('current-default-pw').textContent=state.defaultPw||DEFAULT_PW;
   const ng=document.getElementById('nameGrid');ng.innerHTML='';
-  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='name-item';item.innerHTML='<label>No.'+i+'</label>';const inp=document.createElement('input');inp.type='text';inp.value=state.numNames[i]||'';inp.placeholder='名前';inp.onblur=()=>{if(inp.value.trim())state.numNames[i]=inp.value.trim();else delete state.numNames[i];save();};item.appendChild(inp);ng.appendChild(item);}
+  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='name-item';item.innerHTML='<label>No.'+i+'</label>';const inp=document.createElement('input');inp.type='text';inp.value=state.numNames[i]||'';inp.placeholder='名前';inp.onblur=()=>{if(inp.value.trim())state.numNames[i]=inp.value.trim();else delete state.numNames[i];saveSettings();};item.appendChild(inp);ng.appendChild(item);}
   const pg=document.getElementById('pwResetGrid');pg.innerHTML='';
-  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='pw-item';const hasC=!!state.numPws[i];item.innerHTML='<label>No.'+i+(hasC?' ★':'')+'</label>';const btn=document.createElement('button');btn.className='btn danger sm';btn.style.width='100%';btn.textContent=hasC?'リセット':'設定なし';btn.disabled=!hasC;btn.style.opacity=hasC?'1':'0.35';btn.onclick=()=>{if(confirm('No.'+i+' のパスワードをリセットしますか？')){delete state.numPws[i];save();buildSettings();}};item.appendChild(btn);pg.appendChild(item);}
+  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='pw-item';const hasC=!!state.numPws[i];item.innerHTML='<label>No.'+i+(hasC?' ★':'')+'</label>';const btn=document.createElement('button');btn.className='btn danger sm';btn.style.width='100%';btn.textContent=hasC?'リセット':'設定なし';btn.disabled=!hasC;btn.style.opacity=hasC?'1':'0.35';btn.onclick=async()=>{if(confirm('No.'+i+' のパスワードをリセットしますか？')){delete state.numPws[i];await saveSettings();buildSettings();}};item.appendChild(btn);pg.appendChild(item);}
 }
-function saveAdminPw(){const v=document.getElementById('new-admin-pw').value.trim();if(!v)return;state.adminPw=v;save();const m=document.getElementById('admin-pw-save-msg');m.textContent='保存しました';setTimeout(()=>{m.textContent=''},2000);}
-function saveDefaultPw(){const v=document.getElementById('default-pw-input').value.trim();if(!v)return;state.defaultPw=v;save();document.getElementById('current-default-pw').textContent=v;const m=document.getElementById('admin-pw-save-msg');m.textContent='更新しました';setTimeout(()=>{m.textContent=''},2000);}
-buildGrid();
+window.saveAdminPw=async function(){const v=document.getElementById('new-admin-pw').value.trim();if(!v)return;state.adminPw=v;await saveSettings();const m=document.getElementById('admin-pw-save-msg');m.textContent='保存しました';setTimeout(()=>{m.textContent=''},2000);}
+window.saveDefaultPw=async function(){const v=document.getElementById('default-pw-input').value.trim();if(!v)return;state.defaultPw=v;await saveSettings();document.getElementById('current-default-pw').textContent=v;const m=document.getElementById('admin-pw-save-msg');m.textContent='更新しました';setTimeout(()=>{m.textContent=''},2000);}
+
+window.goHome=goHome;window.switchSem=switchSem;
+loadInitialState().then(()=>listenToSettings());
 </script>
+</body>
+</html>
