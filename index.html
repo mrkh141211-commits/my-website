@@ -551,7 +551,8 @@ function buildGrid(){
     const ns=document.createElement('div');ns.className='num-num';ns.textContent=i;b.appendChild(ns);
     const ni=document.createElement('input');ni.className='name-inp';ni.type='text';ni.value=state.numNames[i]||'';ni.placeholder='名前を入力';ni.maxLength=12;
     ni.addEventListener('click',e=>e.stopPropagation());ni.addEventListener('focus',e=>e.stopPropagation());
-    ni.addEventListener('input',()=>{const v=ni.value.trim();if(v)state.numNames[i]=v;else delete state.numNames[i];saveSettings();});
+    ni.addEventListener('input',()=>{const v=ni.value.trim();if(v)state.numNames[i]=v;else delete state.numNames[i];});
+    ni.addEventListener('blur',()=>{saveSettings();});
     ni.addEventListener('keydown',e=>{if(e.key==='Enter')ni.blur();e.stopPropagation();});
     b.appendChild(ni);
     const u=getUnread(i,currentSem);if(u>0){const ub=document.createElement('div');ub.className='ubadge';ub.textContent=u;b.appendChild(ub);}
