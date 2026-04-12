@@ -747,18 +747,18 @@ function renderDetailReply(c,sem,num){
     // 管理者：先生コメントを編集できるテキストエリア
     const wrap=document.createElement('div');wrap.style.cssText='background:#e8f5f0;border-top:2px solid #5aad88;padding:10px 12px;margin-bottom:8px;border-radius:0 0 8px 8px;';
     wrap.innerHTML='<div style="font-size:10px;font-weight:700;color:#3a7a55;opacity:.7;margin-bottom:4px;">✏️ 先生からのコメント（編集可能）</div>';
-    const rta=document.createElement('textarea');rta.value=c.reply||'';rta.placeholder='先生からのコメントを入力...';rta.style.cssText='width:100%;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;resize:none;outline:none;background:#fff;';rta.rows=2;
+    const rta=document.createElement('textarea');rta.value=c.reply||'';rta.placeholder='先生からのコメントを入力...';
+    rta.style.cssText='width:100%;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;resize:none;outline:none;background:#fff;min-height:36px;overflow:hidden;';
     rta.addEventListener('input',()=>autoResize(rta));
     const rb=document.createElement('button');rb.className='e-btn primary';rb.style.cssText='margin-top:5px;font-size:11px;';rb.textContent='保存';
     rb.onclick=async()=>{
       c.reply=rta.value;c.replyTs=Date.now();
       await saveBoardDirect(sem,num);
       if(!isAdminMode)renderCols();else renderAdminCols();
-      // モーダルの先生コメント表示を更新
       renderDetailReply(c,sem,num);
     };
-    setTimeout(()=>autoResize(rta),30);
     wrap.appendChild(rta);wrap.appendChild(rb);container.appendChild(wrap);
+    requestAnimationFrame(()=>autoResize(rta));
   } else {
     // 生徒：先生コメントを表示のみ
     if(c.reply){
@@ -944,7 +944,7 @@ function buildAdminColBody(body,num,brd){
     const replyWrap=document.createElement('div');replyWrap.style.cssText='background:#e8f5f0;border-top:2px solid #5aad88;padding:8px 10px;margin-top:6px;border-radius:0 0 8px 8px;';
     replyWrap.innerHTML='<div style="font-size:10px;font-weight:700;color:#3a7a55;opacity:.7;margin-bottom:4px;">✏️ 先生からのコメント</div>';
     const rta=document.createElement('textarea');rta.value=card.reply||'';rta.placeholder='先生からのコメントを入力...';
-    rta.style.cssText='width:100%;font-size:12px;font-family:M PLUS Rounded 1c,sans-serif;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;background:#fff;resize:none;outline:none;';rta.rows=2;
+    rta.style.cssText='width:100%;font-size:12px;font-family:M PLUS Rounded 1c,sans-serif;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;background:#fff;resize:none;outline:none;min-height:36px;overflow:hidden;';
     rta.addEventListener('input',()=>autoResize(rta));
     const rsave=document.createElement('button');rsave.className='btn primary sm';rsave.style.marginTop='5px';rsave.textContent='保存';
     rsave.onclick=async()=>{
@@ -952,8 +952,9 @@ function buildAdminColBody(body,num,brd){
       await saveBoardDirect(adminSem,num);
       rsave.textContent='✓ 保存済';setTimeout(()=>{rsave.textContent='保存';},1500);
     };
-    setTimeout(()=>autoResize(rta),30);
+    // ★ DOMに追加された後に確実にリサイズ
     replyWrap.appendChild(rta);replyWrap.appendChild(rsave);ac.appendChild(replyWrap);
+    requestAnimationFrame(()=>autoResize(rta));
 
     // コメントスレッド表示
     const commentsCount=(card.comments||[]).length;
