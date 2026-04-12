@@ -447,7 +447,10 @@ function listenToBoard(sem,num){
   boardListener=onValue(ref(db,`sems/${sem}/${num}`),(snap)=>{
     if(!snap.exists())return;
     const newData=snap.val();
-    if(!document.querySelector('.rich-card.editing')){
+    // 編集中・新規入力中は再描画しない
+    const isEditing=document.querySelector('.rich-card.editing');
+    const isAdding=document.querySelector('.new-card-wrap');
+    if(!isEditing&&!isAdding){
       state.sems[sem][num]=newData;
       if(currentNum===num&&currentSem===sem){renderCols();updateRestoreBanner();}
     }
@@ -526,7 +529,14 @@ function listenToSettings(){
   if(settingsListener){settingsListener();settingsListener=null;}
   settingsListener=onValue(ref(db,'settings'),(snap)=>{
     if(!snap.exists())return;
-    const s=snap.val();state.adminPw=s.adminPw||DEFAULT_ADMIN_PW;state.defaultPw=s.defaultPw||DEFAULT_PW;state.numPws=s.numPws||{};state.numNames=s.numNames||{};buildGrid();
+    const s=snap.val();
+    state.adminPw=s.adminPw||DEFAULT_ADMIN_PW;
+    state.defaultPw=s.defaultPw||DEFAULT_PW;
+    state.numPws=s.numPws||{};
+    state.numNames=s.numNames||{};
+    if(document.getElementById('screen-home').classList.contains('active')){
+      buildGrid();
+    }
   });
 }
 
@@ -793,4 +803,3 @@ window.goHome=goHome;window.switchSem=switchSem;
 loadInitialState().then(()=>listenToSettings());
 </script>
 </body>
-</html>
