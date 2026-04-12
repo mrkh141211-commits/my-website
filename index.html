@@ -418,13 +418,22 @@ async function saveSettings(){
 }
 async function saveBoardData(sem,num){
   showSync(true,document.getElementById('boardSyncIndicator'));
+  isSavingMyself=true;
   await set(ref(db,`sems/${sem}/${num}`),state.sems[sem][num]);
   showSync(false,document.getElementById('boardSyncIndicator'));
+  if(isSavingTimer)clearTimeout(isSavingTimer);
+  isSavingTimer=setTimeout(()=>{isSavingMyself=false;},3000);
 }
 function autoSave(sem,num){
   showSync(true,document.getElementById('boardSyncIndicator'));
   if(saveTimer)clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{ await saveBoardData(sem,num); },300);
+  saveTimer=setTimeout(async()=>{
+    isSavingMyself=true;
+    await saveBoardData(sem,num);
+    // 保存完了後3秒間はリスナーの反応を無視
+    if(isSavingTimer)clearTimeout(isSavingTimer);
+    isSavingTimer=setTimeout(()=>{isSavingMyself=false;},3000);
+  },300);
 }
 
 async function loadInitialState(){
@@ -442,17 +451,29 @@ async function loadInitialState(){
   buildGrid();show('home');
 }
 
+// 自分の操作による保存かどうかを管理するフラグ
+let isSavingMyself=false;
+let isSavingTimer=null;
+
 function listenToBoard(sem,num){
   if(boardListener){boardListener();boardListener=null;}
+  let isFirstCall=true;
   boardListener=onValue(ref(db,`sems/${sem}/${num}`),(snap)=>{
     if(!snap.exists())return;
+    // 初回はstateを更新するだけ（再描画しない）
+    if(isFirstCall){
+      isFirstCall=false;
+      state.sems[sem][num]=snap.val();
+      return;
+    }
+    // 自分の保存による発火は無視
+    if(isSavingMyself)return;
+    // 他の人の変更なので反映する
     const newData=snap.val();
-    // 編集中・新規入力中は再描画しない
-    const isEditing=document.querySelector('.rich-card.editing');
-    const isAdding=document.querySelector('.new-card-wrap');
-    if(!isEditing&&!isAdding){
-      state.sems[sem][num]=newData;
-      if(currentNum===num&&currentSem===sem){renderCols();updateRestoreBanner();}
+    state.sems[sem][num]=newData;
+    if(currentNum===num&&currentSem===sem){
+      renderCols();
+      updateRestoreBanner();
     }
   });
 }
@@ -549,6 +570,9 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.re
 function goHome(){
   if(boardListener){boardListener();boardListener=null;}
   adminBoardListeners.forEach(u=>u());adminBoardListeners=[];
+  isSavingMyself=false;
+  if(isSavingTimer){clearTimeout(isSavingTimer);isSavingTimer=null;}
+  if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
   show('home');buildGrid();
 }
 function switchSem(i){currentSem=i;document.querySelectorAll('#semTabs .sem-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));buildGrid();}
@@ -630,7 +654,13 @@ function renderCols(){
   });
   const aw=document.createElement('div');aw.className='add-col-wrap';
   const ab=document.createElement('button');ab.className='add-col-btn';ab.textContent='+';ab.title='セクションを追加';
-  ab.onclick=()=>{getBrd().cols.push({id:uid(),title:'新しいセクション',cards:[]});autoSave(currentSem,currentNum);renderCols();};
+  ab.onclick=(e)=>{
+    e.stopPropagation();
+    const newCol={id:uid(),title:'新しいセクション',cards:[]};
+    getBrd().cols.push(newCol);
+    renderCols(); // まず画面に反映
+    autoSave(currentSem,currentNum); // その後保存
+  };
   aw.appendChild(ab);wrap.appendChild(aw);
 }
 
@@ -803,3 +833,4 @@ window.goHome=goHome;window.switchSem=switchSem;
 loadInitialState().then(()=>listenToSettings());
 </script>
 </body>
+</html>
