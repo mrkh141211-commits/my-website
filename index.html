@@ -98,7 +98,7 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .restore-bar-btns{display:flex;gap:6px;flex-shrink:0;}
 
 /* ===== COLS SCROLL ===== */
-.cols-scroll{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;display:flex;gap:14px;align-items:flex-start;padding:18px 20px;background-size:cover;background-position:center;}
+.cols-scroll{flex:1 1 auto;overflow-x:auto;overflow-y:auto;display:flex;gap:14px;align-items:flex-start;padding:18px 20px;background-size:cover;background-position:center;}
 
 /* ===== PADLET COL ===== */
 .padlet-col{flex:0 0 260px;display:flex;flex-direction:column;background:rgba(255,255,255,0.65);backdrop-filter:blur(8px);border-radius:16px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 2px 16px rgba(0,0,0,0.07);overflow:hidden;}
@@ -110,14 +110,14 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .col-add-btn:hover{background:#2a5a90;transform:scale(1.1);}
 .col-del-btn{width:20px;height:20px;border-radius:50%;background:transparent;color:#ccc;border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .col-del-btn:hover{background:#fee;color:var(--red);}
-.col-cards{padding:10px 10px 8px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:480px;}
+.col-cards{padding:10px 10px 8px;display:flex;flex-direction:column;gap:10px;overflow-y:visible;}
 
 /* ===== RICH CARD ===== */
-.rich-card{border-radius:12px;overflow:hidden;cursor:pointer;background:#fff;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);}
+.rich-card{border-radius:12px;overflow:visible;cursor:pointer;background:#fff;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);}
 .rich-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.13);}
 .rich-card.editing{cursor:default;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,0.15);}
-.card-img-area{width:100%;height:140px;object-fit:cover;display:block;}
-.card-img-grad{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.card-img-area{width:100%;height:140px;object-fit:cover;display:block;border-radius:12px 12px 0 0;}
+.card-img-grad{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;border-radius:12px 12px 0 0;}
 .gi-blue{background:linear-gradient(135deg,#a8edea,#fed6e3);}
 .gi-yellow{background:linear-gradient(135deg,#ffecd2,#fcb69f);}
 .gi-green{background:linear-gradient(135deg,#d4fc79,#96e6a1);}
@@ -132,9 +132,9 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .card-text{font-size:13px;font-weight:500;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-all;}
 .card-stamps{font-size:16px;padding:2px 0;display:flex;gap:3px;flex-wrap:wrap;}
 .card-ts{font-size:10px;color:#bbb;margin-top:3px;font-style:italic;}
-.admin-reply-band{background:#e8f5f0;border-top:2px solid #5aad88;padding:6px 12px;font-size:11px;font-weight:500;color:#2e7a55;}
+.admin-reply-band{background:#e8f5f0;border-top:2px solid #5aad88;padding:8px 12px;font-size:11px;font-weight:500;color:#2e7a55;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
 .admin-reply-band strong{display:block;font-size:9px;opacity:.6;margin-bottom:1px;}
-.card-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 8px;border-top:1px solid rgba(0,0,0,0.05);}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 8px;border-top:1px solid rgba(0,0,0,0.05);border-radius:0 0 12px 12px;}
 .like-btn{display:flex;align-items:center;gap:3px;font-size:12px;color:#ccc;cursor:pointer;border:none;background:none;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:700;transition:color .1s;}
 .like-btn:hover,.like-btn.liked{color:var(--red);}
 .comment-btn{display:flex;align-items:center;gap:3px;font-size:11px;color:#aaa;cursor:pointer;border:none;background:none;padding:2px 6px;border-radius:6px;font-family:'M PLUS Rounded 1c',sans-serif;font-weight:700;transition:background .1s;}
@@ -244,6 +244,7 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
     <div class="logo">📓 成長ノート</div>
     <div class="top-right">
       <span class="sync-badge" id="syncIndicator">✓ 同期済み</span>
+      <button class="btn sm" onclick="refreshHome()" id="refreshBtn">🔄 更新</button>
       <button class="btn sm" onclick="openAdminLogin()">管理者</button>
     </div>
   </div>
@@ -1096,6 +1097,40 @@ window.saveDefaultPw=async function(){const v=document.getElementById('default-p
 
 // ===== 起動 =====
 loadInitialState();
+
+window.refreshHome=async function(){
+  const btn=document.getElementById('refreshBtn');
+  if(btn){btn.textContent='🔄 更新中...';btn.disabled=true;}
+  try{
+    // settingsも更新
+    const snap=await get(ref(db,'settings'));
+    if(snap.exists()){
+      const s=snap.val();
+      state.adminPw=s.adminPw||DEFAULT_ADMIN_PW;
+      state.defaultPw=s.defaultPw||DEFAULT_PW;
+      state.numPws=s.numPws||{};
+      state.numNames=s.numNames||{};
+    }
+    // 全員分のデータを更新
+    const semsSnap=await get(ref(db,'sems'));
+    if(semsSnap.exists()){
+      const sd=semsSnap.val();
+      for(let sem=0;sem<3;sem++){
+        if(sd[sem]){
+          for(let i=1;i<=TOTAL;i++){
+            if(sd[sem][i]){
+              state.sems[sem][i]=sd[sem][i];
+              if(!state.sems[sem][i].cols)state.sems[sem][i].cols=[{id:uid(),title:'メモ',cards:[]}];
+              if(state.sems[sem][i].trash===undefined)state.sems[sem][i].trash=null;
+            }
+          }
+        }
+      }
+    }
+    buildGrid();
+  }catch(e){console.error('refresh error',e);}
+  if(btn){btn.textContent='🔄 更新';btn.disabled=false;}
+};
 </script>
 </body>
 </html>
