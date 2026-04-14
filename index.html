@@ -45,7 +45,7 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;color:var(--ink);font-size:15px;
 .num-card{
   aspect-ratio:1;border-radius:14px;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:visible;transition:transform .2s,box-shadow .2s;
   background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.9);
   box-shadow:0 2px 10px rgba(0,0,0,0.06);
 }
@@ -57,7 +57,24 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;color:var(--ink);font-size:15px;
 .num-card:nth-child(5n+4){border-top:3px solid #81c784;}
 .num-card:nth-child(5n){border-top:3px solid #ce93d8;}
 .num-card .dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--red);}
-.num-card .ubadge{position:absolute;top:5px;left:5px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;}
+.num-card .ubadge{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  background:#ff6b9d;border-radius:20px;
+  min-width:32px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 7px;gap:3px;
+  box-shadow:0 2px 8px rgba(255,107,157,0.45);
+  font-size:11px;font-weight:800;color:#fff;
+  white-space:nowrap;
+  z-index:2;
+}
+.num-card .ubadge::after{
+  content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:6px solid #ff6b9d;
+}
 .num-num{font-size:clamp(18px,3.5vw,28px);font-weight:800;color:var(--ink);line-height:1;}
 .name-inp{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(13px,2.8vw,17px);font-weight:800;color:#333;background:transparent;border:none;border-bottom:1px solid transparent;text-align:center;outline:none;width:92%;margin-top:5px;}
 .name-inp::placeholder{color:#ccc;}
@@ -403,7 +420,7 @@ const BG_PRESETS=[{label:'クリーム',c:'#f7f5f0'},{label:'空色',c:'#e8f4fd'
 
 let state=null;
 let currentNum=null,currentSem=0,adminSem=0,showUnreadOnly=false,allAccOpen=false;
-let detailTarget=null; // {colId, cardId, sem, num} — numは管理者から開く時に使う
+let detailTarget=null; // {colId, cardId, sem, num} - numは管理者から開く時に使う
 let isAdminMode=false; // 管理者モードでモーダルを開いた時true
 let saveTimer=null;
 
@@ -416,6 +433,15 @@ function autoResize(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'
 async function saveSettings(){
   try{await set(ref(db,'settings'),{adminPw:state.adminPw,defaultPw:state.defaultPw,numPws:state.numPws||{},numNames:state.numNames||{},activeSem:state.activeSem||0});}
   catch(e){console.error('saveSettings',e);}
+}
+
+// lastSeenをlocalStorageに保存（端末ごとに管理）
+function saveLastSeen(){
+  try{localStorage.setItem('seichou_lastSeen',JSON.stringify(state.lastSeen));}catch(e){}
+}
+function loadLastSeen(){
+  try{const s=localStorage.getItem('seichou_lastSeen');if(s)return JSON.parse(s);}catch(e){}
+  return {};
 }
 
 function autoSave(){
@@ -446,6 +472,8 @@ async function loadInitialState(){
       await saveSettings();
     }
   }catch(e){state={adminPw:DEFAULT_ADMIN_PW,defaultPw:DEFAULT_PW,numPws:{},numNames:{},activeSem:0,sems:[{},{},{}],lastSeen:{}};}
+  // lastSeenをlocalStorageから復元
+  state.lastSeen=loadLastSeen();
   for(let sem=0;sem<3;sem++){if(!state.sems[sem])state.sems[sem]={};for(let i=1;i<=TOTAL;i++)state.sems[sem][i]=makeDefaultBoard();}
   try{
     const semsSnap=await get(ref(db,'sems'));
@@ -460,10 +488,14 @@ async function loadInitialState(){
 }
 
 function getPw(n){return state.numPws[n]||state.defaultPw||DEFAULT_PW}
-function isInitPw(n,v){return v===(state.defaultPw||DEFAULT_PW)&&!state.numPws[n]}
+function isInitPw(n,v){
+  // numPwsに登録がない（未設定 or リセット済み）かつ入力値が初期PWと一致
+  return !state.numPws[n]&&v===(state.defaultPw||DEFAULT_PW);
+}
 function getUnread(n,sem){
   if(!state.sems[sem]||!state.sems[sem][n]||!state.sems[sem][n].cols)return 0;
   const ls=state.lastSeen[sem+'_'+n]||0;
+  // 返信があるカードをカウント（ls=0なら全返信、ls>0なら最後に開いた後の返信）
   return state.sems[sem][n].cols.flatMap(c=>c.cards||[]).filter(c=>c.replyTs&&c.replyTs>ls).length;
 }
 function hasContent(n){
@@ -493,7 +525,6 @@ window.goHome=goHome;
 window.switchSem=function(i){
   currentSem=i;
   document.querySelectorAll('#semTabs .sem-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
-  // 現在の学期以外は読み取り専用バッジを表示
   const badge=document.getElementById('readonlyBadge');
   if(badge){badge.style.display=(i!==state.activeSem)?'inline-block':'none';}
   buildGrid();
@@ -511,7 +542,7 @@ function buildGrid(){
     ni.addEventListener('blur',()=>saveSettings());
     ni.addEventListener('keydown',e=>{if(e.key==='Enter')ni.blur();e.stopPropagation();});
     b.appendChild(ni);
-    const u=getUnread(i,currentSem);if(u>0){const ub=document.createElement('div');ub.className='ubadge';ub.textContent=u;b.appendChild(ub);}
+    const u=getUnread(i,currentSem);if(u>0){const ub=document.createElement('div');ub.className='ubadge';ub.innerHTML='<span style="font-size:12px;">💬</span><span>'+u+'</span>';b.appendChild(ub);}
     if(hasContent(i)){const d=document.createElement('span');d.className='dot';b.appendChild(d);}
     b.onclick=()=>openNum(i);g.appendChild(b);
   }
@@ -526,7 +557,29 @@ window.refreshHome=async function(){
 
 // ===== PW =====
 function openNum(n){currentNum=n;document.getElementById('pw-num').textContent=n+(state.numNames[n]?' ('+state.numNames[n]+')':'');document.getElementById('pw-input').value='';document.getElementById('pw-err').textContent='';show('pw');setTimeout(()=>document.getElementById('pw-input').focus(),100);}
-window.checkPw=function(){const v=document.getElementById('pw-input').value;if(v===getPw(currentNum)){if(isInitPw(currentNum,v)){document.getElementById('newpw-input').value='';document.getElementById('newpw-confirm').value='';document.getElementById('newpw-err').textContent='';show('setpw');setTimeout(()=>document.getElementById('newpw-input').focus(),100);}else openBoard(currentNum);}else document.getElementById('pw-err').textContent='パスワードが違います';}
+window.checkPw=function(){
+  const v=document.getElementById('pw-input').value;
+  const n=currentNum;
+  if(!state.numPws[n]){
+    // カスタムPW未設定（初回 or リセット済み）→ 初期PWのみ受け付ける
+    if(v===(state.defaultPw||DEFAULT_PW)){
+      document.getElementById('newpw-input').value='';
+      document.getElementById('newpw-confirm').value='';
+      document.getElementById('newpw-err').textContent='';
+      show('setpw');
+      setTimeout(()=>document.getElementById('newpw-input').focus(),100);
+    } else {
+      document.getElementById('pw-err').textContent='パスワードが違います（初期パスワードを入力してください）';
+    }
+  } else {
+    // カスタムPW設定済み → カスタムPWで認証
+    if(v===state.numPws[n]){
+      openBoard(n);
+    } else {
+      document.getElementById('pw-err').textContent='パスワードが違います';
+    }
+  }
+}
 window.saveNewPw=function(){const p1=document.getElementById('newpw-input').value,p2=document.getElementById('newpw-confirm').value;if(!p1){document.getElementById('newpw-err').textContent='パスワードを入力してください';return;}if(p1!==p2){document.getElementById('newpw-err').textContent='パスワードが一致しません';return;}state.numPws[currentNum]=p1;saveSettings();openBoard(currentNum);}
 
 // ===== BOARD =====
@@ -535,7 +588,9 @@ async function openBoard(n){
   document.getElementById('board-num-badge').textContent=n+'番';
   document.getElementById('board-user-name').textContent=state.numNames[n]||'（名前未設定）';
   document.getElementById('board-sem-badge').textContent=(currentSem+1)+'学期';
+  // ボードを開いた時刻を記録（既読処理）
   state.lastSeen[currentSem+'_'+n]=Date.now();
+  saveLastSeen();
   try{const snap=await get(ref(db,`sems/${currentSem}/${n}`));if(snap.exists()){const d=snap.val();if(!d.cols)d.cols=[{id:uid(),title:'メモ',cards:[]}];if(d.trash===undefined)d.trash=null;state.sems[currentSem][n]=d;}}catch(e){}
   // 読み取り専用モード：現在の学期以外は閲覧のみ
   const isReadOnly=(currentSem!==state.activeSem);
@@ -758,21 +813,8 @@ function openDetail(col,c,sem,num,adminMode){
 function renderDetailReply(c,sem,num){
   const container=document.getElementById('detail-reply');container.innerHTML='';
   if(isAdminMode){
-    // 管理者：先生コメントを編集できるテキストエリア
-    const wrap=document.createElement('div');wrap.style.cssText='background:#e8f5f0;border-top:2px solid #5aad88;padding:10px 12px;margin-bottom:8px;border-radius:0 0 8px 8px;';
-    wrap.innerHTML='<div style="font-size:10px;font-weight:700;color:#3a7a55;opacity:.7;margin-bottom:4px;">✏️ 先生からのコメント（編集可能）</div>';
-    const rta=document.createElement('textarea');rta.value=c.reply||'';rta.placeholder='先生からのコメントを入力...';
-    rta.style.cssText='width:100%;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;resize:none;outline:none;background:#fff;min-height:36px;overflow:hidden;';
-    rta.addEventListener('input',()=>autoResize(rta));
-    const rb=document.createElement('button');rb.className='e-btn primary';rb.style.cssText='margin-top:5px;font-size:11px;';rb.textContent='保存';
-    rb.onclick=async()=>{
-      c.reply=rta.value;c.replyTs=Date.now();
-      await saveBoardDirect(sem,num);
-      if(!isAdminMode)renderCols();else renderAdminCols();
-      renderDetailReply(c,sem,num);
-    };
-    wrap.appendChild(rta);wrap.appendChild(rb);container.appendChild(wrap);
-    requestAnimationFrame(()=>autoResize(rta));
+    // 管理者モード：先生コメントはカード内編集欄で管理するのでモーダルには表示しない
+    // （重複表示を避けるため）
   } else {
     // 生徒：先生コメントを表示のみ
     if(c.reply){
@@ -953,10 +995,22 @@ function renderAdminCols(){
       const monthHdr=document.createElement('div');
       monthHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f0f4ff;cursor:pointer;user-select:none;';
       const monthTitle=document.createElement('span');monthTitle.style.cssText='font-size:13px;font-weight:800;color:#3a6fa8;';monthTitle.textContent=col.title;
-      const monthCount=document.createElement('span');monthCount.style.cssText='font-size:11px;color:#aaa;font-weight:500;display:flex;align-items:center;gap:6px;';monthCount.textContent=colCards.length+'件';
+      const monthRight=document.createElement('div');monthRight.style.cssText='display:flex;align-items:center;gap:8px;';
+      const monthCount=document.createElement('span');monthCount.style.cssText='font-size:11px;color:#aaa;font-weight:500;';monthCount.textContent=colCards.length+'件';
       const monthChevron=document.createElement('span');monthChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;';monthChevron.textContent='▼';
-      monthCount.appendChild(monthChevron);
-      monthHdr.appendChild(monthTitle);monthHdr.appendChild(monthCount);
+      // セクション削除ボタン（管理者のみ）
+      const colDelBtn=document.createElement('button');
+      colDelBtn.style.cssText='font-size:11px;color:#e57373;background:none;border:1px solid #ffcdd2;border-radius:6px;padding:2px 7px;cursor:pointer;font-weight:700;';
+      colDelBtn.textContent='削除';
+      colDelBtn.onclick=async(e)=>{
+        e.stopPropagation();
+        if(!confirm('「'+col.title+'」セクションを削除しますか？\nカードも全て削除されます。'))return;
+        brd.cols=brd.cols.filter(c=>c.id!==col.id);
+        await saveBoardDirect(adminSem,i);
+        renderAdminCols();
+      };
+      monthRight.appendChild(monthCount);monthRight.appendChild(colDelBtn);monthRight.appendChild(monthChevron);
+      monthHdr.appendChild(monthTitle);monthHdr.appendChild(monthRight);
 
       // 月本体
       const monthBody=document.createElement('div');monthBody.setAttribute('data-month-body','1');monthBody.style.cssText='display:none;padding:8px 10px;background:#fff;';
@@ -1007,26 +1061,39 @@ function buildAdminCardEl(col,card,num,brd){
   const ac=document.createElement('div');ac.className='admin-card-item '+cc;
   ac.style.cssText='border-radius:10px;border:1px solid rgba(0,0,0,0.08);margin-bottom:8px;background:#fff;overflow:hidden;cursor:pointer;';
 
-  // ===== カードヘッダー（常時表示） =====
+  // ===== カードヘッダー：テキスト冒頭を直接表示 =====
   const cardHdr=document.createElement('div');
-  cardHdr.style.cssText='padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;';
+  cardHdr.style.cssText='padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;';
 
-  const cardPreview=document.createElement('div');cardPreview.style.cssText='flex:1;overflow:hidden;';
-  // テキストプレビュー（1行）
+  const cardLeft=document.createElement('div');cardLeft.style.cssText='flex:1;overflow:hidden;';
+
+  // テキスト冒頭（2行分）
   const previewTxt=document.createElement('div');
-  previewTxt.style.cssText='font-size:13px;font-weight:600;color:#2a2a2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-  previewTxt.textContent=card.text||(card.img?'📷 画像':'（空）');
-  // 日付
+  const previewText=card.text||(card.img?'📷 画像':'（空）');
+  const lines=previewText.split('\n');
+  const preview=lines.slice(0,2).join('\n')+(lines.length>2||previewText.length>40?'..':'');
+  previewTxt.className='card-preview-txt';previewTxt.style.cssText='font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;white-space:pre-wrap;word-break:break-all;';
+  previewTxt.textContent=preview;
+
+  // 日付・返信済みフラグ
   const previewMeta=document.createElement('div');
-  previewMeta.style.cssText='font-size:10px;color:#aaa;margin-top:2px;';
-  previewMeta.textContent='📅'+(card.createdTs||card.ts)+(card.reply?' · 返信済✓':'');
-  cardPreview.appendChild(previewTxt);cardPreview.appendChild(previewMeta);
+  previewMeta.style.cssText='font-size:10px;color:#aaa;margin-top:3px;display:flex;align-items:center;gap:6px;';
+  const metaDate=document.createElement('span');metaDate.textContent='📅'+(card.createdTs||card.ts);
+  previewMeta.appendChild(metaDate);
+  if(card.reply){
+    const repliedBadge=document.createElement('span');
+    repliedBadge.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;';
+    repliedBadge.textContent='返信済✓';
+    previewMeta.appendChild(repliedBadge);
+  }
+
+  cardLeft.appendChild(previewTxt);cardLeft.appendChild(previewMeta);
 
   const cardChevron=document.createElement('span');
-  cardChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;flex-shrink:0;';
+  cardChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;flex-shrink:0;margin-top:2px;';
   cardChevron.textContent='▼';
 
-  cardHdr.appendChild(cardPreview);cardHdr.appendChild(cardChevron);
+  cardHdr.appendChild(cardLeft);cardHdr.appendChild(cardChevron);
   ac.appendChild(cardHdr);
 
   // ===== カード詳細（開いた時のみ表示） =====
@@ -1039,7 +1106,7 @@ function buildAdminCardEl(col,card,num,brd){
   // テキスト全文
   if(card.text){
     const t=document.createElement('div');
-    t.style.cssText='white-space:pre-wrap;word-break:break-all;font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;margin-bottom:8px;';
+    t.style.cssText='white-space:pre-wrap;word-break:break-all;font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;margin-bottom:8px;padding:8px 10px;background:#fafafa;border-radius:8px;border:1px solid rgba(0,0,0,0.06);';
     t.textContent=card.text;cardDetail.appendChild(t);
   }
   if(card.stamps&&card.stamps.length){const s=document.createElement('div');s.style.cssText='font-size:15px;margin-bottom:6px;';s.textContent=card.stamps.join('');cardDetail.appendChild(s);}
@@ -1056,8 +1123,11 @@ function buildAdminCardEl(col,card,num,brd){
   rsave.onclick=async(e)=>{
     e.stopPropagation();
     if(card.reply!==rta.value){card.reply=rta.value;card.replyTs=Date.now();}
-    // ヘッダーの返信済み表示を更新
-    previewMeta.textContent='📅'+(card.createdTs||card.ts)+(card.reply?' · 返信済✓':'');
+    // 返信済みバッジを更新
+    const existBadge=previewMeta.querySelector('span[style*="e8f5f0"]');
+    if(card.reply&&!existBadge){
+      const rb=document.createElement('span');rb.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;';rb.textContent='返信済✓';previewMeta.appendChild(rb);
+    }
     await saveBoardDirect(adminSem,num);
     rsave.textContent='✓ 保存済';setTimeout(()=>{rsave.textContent='保存';},1500);
   };
@@ -1084,23 +1154,28 @@ function buildAdminCardEl(col,card,num,brd){
   // ===== タップで開閉（同じ月内で排他制御） =====
   cardHdr.onclick=(e)=>{
     const isOpen=cardDetail.style.display!=='none';
-    // 同じ月ブロック内の他のカードを全部閉じる
-    const parentMonth=ac.closest('div[data-month-body]')||ac.parentElement;
+    const parentMonth=ac.closest('[data-month-body]')||ac.parentElement;
+    // 他のカードを全部閉じてプレビューを再表示
     parentMonth.querySelectorAll('.admin-card-item').forEach(sibling=>{
       if(sibling!==ac){
-        const sibDetail=sibling.querySelector('div[style*="border-top"]');
+        const sibDetail=sibling.lastElementChild;
         const sibChev=sibling.querySelector('span');
-        if(sibDetail)sibDetail.style.display='none';
+        const sibPreview=sibling.querySelector('.card-preview-txt');
+        if(sibDetail&&sibDetail!==sibling.firstElementChild)sibDetail.style.display='none';
         if(sibChev)sibChev.style.transform='';
+        if(sibPreview)sibPreview.style.display='';
       }
     });
-    // 自分を開閉
     if(isOpen){
+      // 閉じる → プレビュー再表示
       cardDetail.style.display='none';
       cardChevron.style.transform='';
+      previewTxt.style.display='';
     } else {
+      // 開く → プレビュー非表示（全文が展開されるので不要）
       cardDetail.style.display='block';
       cardChevron.style.transform='rotate(180deg)';
+      previewTxt.style.display='none';
       requestAnimationFrame(()=>autoResize(rta));
     }
   };
