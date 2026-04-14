@@ -474,6 +474,12 @@ async function loadInitialState(){
   }catch(e){state={adminPw:DEFAULT_ADMIN_PW,defaultPw:DEFAULT_PW,numPws:{},numNames:{},activeSem:0,sems:[{},{},{}],lastSeen:{}};}
   // lastSeenをlocalStorageから復元
   state.lastSeen=loadLastSeen();
+  // numPwsのキーを文字列に正規化（Firebaseが数値で返す場合の対策）
+  if(state.numPws){
+    const normalized={};
+    Object.keys(state.numPws).forEach(k=>{normalized[String(k)]=state.numPws[k];});
+    state.numPws=normalized;
+  }
   for(let sem=0;sem<3;sem++){if(!state.sems[sem])state.sems[sem]={};for(let i=1;i<=TOTAL;i++)state.sems[sem][i]=makeDefaultBoard();}
   try{
     const semsSnap=await get(ref(db,'sems'));
@@ -487,10 +493,10 @@ async function loadInitialState(){
   buildGrid();show('home');
 }
 
-function getPw(n){return state.numPws[n]||state.defaultPw||DEFAULT_PW}
+function getPw(n){return state.numPws[n]||state.numPws[String(n)]||state.defaultPw||DEFAULT_PW}
 function isInitPw(n,v){
   // numPwsに登録がない（未設定 or リセット済み）かつ入力値が初期PWと一致
-  return !state.numPws[n]&&v===(state.defaultPw||DEFAULT_PW);
+  return !(state.numPws[n]||state.numPws[String(n)])&&v===(state.defaultPw||DEFAULT_PW);
 }
 function getUnread(n,sem){
   if(!state.sems[sem]||!state.sems[sem][n]||!state.sems[sem][n].cols)return 0;
@@ -558,29 +564,33 @@ window.refreshHome=async function(){
 // ===== PW =====
 function openNum(n){currentNum=n;document.getElementById('pw-num').textContent=n+(state.numNames[n]?' ('+state.numNames[n]+')':'');document.getElementById('pw-input').value='';document.getElementById('pw-err').textContent='';show('pw');setTimeout(()=>document.getElementById('pw-input').focus(),100);}
 window.checkPw=function(){
-  const v=document.getElementById('pw-input').value;
+  const v=document.getElementById('pw-input').value.trim();
   const n=currentNum;
-  if(!state.numPws[n]){
-    // カスタムPW未設定（初回 or リセット済み）→ 初期PWのみ受け付ける
-    if(v===(state.defaultPw||DEFAULT_PW)){
+  const nk=String(n);
+  // 数値・文字列両方のキーで検索
+  const customPw=state.numPws[nk]||state.numPws[n]||null;
+  const defaultPw=state.defaultPw||DEFAULT_PW;
+  if(!customPw){
+    // カスタムPW未設定（初回 or リセット済み）→ 初期PW
+    if(v===defaultPw){
       document.getElementById('newpw-input').value='';
       document.getElementById('newpw-confirm').value='';
       document.getElementById('newpw-err').textContent='';
       show('setpw');
       setTimeout(()=>document.getElementById('newpw-input').focus(),100);
     } else {
-      document.getElementById('pw-err').textContent='パスワードが違います（初期パスワードを入力してください）';
+      document.getElementById('pw-err').textContent='パスワードが違います';
     }
   } else {
-    // カスタムPW設定済み → カスタムPWで認証
-    if(v===state.numPws[n]){
+    // カスタムPW設定済み
+    if(v===customPw){
       openBoard(n);
     } else {
       document.getElementById('pw-err').textContent='パスワードが違います';
     }
   }
 }
-window.saveNewPw=function(){const p1=document.getElementById('newpw-input').value,p2=document.getElementById('newpw-confirm').value;if(!p1){document.getElementById('newpw-err').textContent='パスワードを入力してください';return;}if(p1!==p2){document.getElementById('newpw-err').textContent='パスワードが一致しません';return;}state.numPws[currentNum]=p1;saveSettings();openBoard(currentNum);}
+window.saveNewPw=function(){const p1=document.getElementById('newpw-input').value,p2=document.getElementById('newpw-confirm').value;if(!p1){document.getElementById('newpw-err').textContent='パスワードを入力してください';return;}if(p1!==p2){document.getElementById('newpw-err').textContent='パスワードが一致しません';return;}state.numPws[String(currentNum)]=p1;saveSettings();openBoard(currentNum);}
 
 // ===== BOARD =====
 async function openBoard(n){
@@ -588,10 +598,23 @@ async function openBoard(n){
   document.getElementById('board-num-badge').textContent=n+'番';
   document.getElementById('board-user-name').textContent=state.numNames[n]||'（名前未設定）';
   document.getElementById('board-sem-badge').textContent=(currentSem+1)+'学期';
-  // ボードを開いた時刻を記録（既読処理）
   state.lastSeen[currentSem+'_'+n]=Date.now();
   saveLastSeen();
-  try{const snap=await get(ref(db,`sems/${currentSem}/${n}`));if(snap.exists()){const d=snap.val();if(!d.cols)d.cols=[{id:uid(),title:'メモ',cards:[]}];if(d.trash===undefined)d.trash=null;state.sems[currentSem][n]=d;}}catch(e){}
+  // Firebaseからデータ取得（エラーでも止まらない）
+  try{
+    const snap=await get(ref(db,`sems/${currentSem}/${n}`));
+    if(snap.exists()){
+      const d=snap.val();
+      if(!d.cols||!Array.isArray(d.cols))d.cols=[{id:uid(),title:'メモ',cards:[]}];
+      if(d.trash===undefined)d.trash=null;
+      // colsの各カードのcardsが配列であることを確認
+      d.cols.forEach(col=>{if(!col.cards||!Array.isArray(col.cards))col.cards=[];});
+      state.sems[currentSem][n]=d;
+    }
+  }catch(e){console.error('openBoard fetch error:',e);}
+  // stateが壊れていても最低限動くように補完
+  if(!state.sems[currentSem][n])state.sems[currentSem][n]={cols:[{id:uid(),title:'メモ',cards:[]}],bg:'#f7f5f0',bgImg:null,trash:null};
+  if(!state.sems[currentSem][n].cols)state.sems[currentSem][n].cols=[{id:uid(),title:'メモ',cards:[]}];
   // 読み取り専用モード：現在の学期以外は閲覧のみ
   const isReadOnly=(currentSem!==state.activeSem);
   const banner=document.getElementById('readonlyBanner');
@@ -1214,7 +1237,7 @@ function buildSettings(){
   const ng=document.getElementById('nameGrid');ng.innerHTML='';
   for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='name-item';item.innerHTML='<label>No.'+i+'</label>';const inp=document.createElement('input');inp.type='text';inp.value=state.numNames[i]||'';inp.placeholder='名前';inp.onblur=()=>{if(inp.value.trim())state.numNames[i]=inp.value.trim();else delete state.numNames[i];saveSettings();};item.appendChild(inp);ng.appendChild(item);}
   const pg=document.getElementById('pwResetGrid');pg.innerHTML='';
-  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='pw-item';const hasC=!!state.numPws[i];item.innerHTML='<label>No.'+i+(hasC?' ★':'')+'</label>';const btn=document.createElement('button');btn.className='btn danger sm';btn.style.width='100%';btn.textContent=hasC?'リセット':'設定なし';btn.disabled=!hasC;btn.style.opacity=hasC?'1':'0.35';btn.onclick=async()=>{if(confirm('No.'+i+' のパスワードをリセットしますか？')){delete state.numPws[i];await saveSettings();buildSettings();}};item.appendChild(btn);pg.appendChild(item);}
+  for(let i=1;i<=TOTAL;i++){const item=document.createElement('div');item.className='pw-item';const si=String(i);const hasC=!!(state.numPws[i]||state.numPws[si]);item.innerHTML='<label>No.'+i+(hasC?' ★':'')+'</label>';const btn=document.createElement('button');btn.className='btn danger sm';btn.style.width='100%';btn.textContent=hasC?'リセット':'設定なし';btn.disabled=!hasC;btn.style.opacity=hasC?'1':'0.35';btn.onclick=async()=>{if(confirm('No.'+i+' のパスワードをリセットしますか？')){delete state.numPws[i];delete state.numPws[si];await saveSettings();buildSettings();}};item.appendChild(btn);pg.appendChild(item);}
 }
 window.setActiveSem=async function(i){
   state.activeSem=i;
