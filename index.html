@@ -118,7 +118,7 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .cols-scroll{flex:1 1 auto;overflow-x:auto;overflow-y:auto;display:flex;gap:14px;align-items:flex-start;padding:18px 20px;background-size:cover;background-position:center;}
 
 /* ===== PADLET COL ===== */
-.padlet-col{flex:0 0 260px;display:flex;flex-direction:column;background:rgba(255,255,255,0.65);backdrop-filter:blur(8px);border-radius:16px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 2px 16px rgba(0,0,0,0.07);overflow:hidden;}
+.padlet-col{flex:0 0 380px;display:flex;flex-direction:column;background:rgba(255,255,255,0.65);backdrop-filter:blur(8px);border-radius:16px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 2px 16px rgba(0,0,0,0.07);overflow:hidden;}
 .col-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(255,255,255,0.5);border-bottom:1px solid rgba(0,0,0,0.06);gap:6px;}
 .col-title-disp{font-size:14px;font-weight:800;color:var(--ink);cursor:pointer;flex:1;padding:2px 5px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .col-title-disp:hover{background:var(--blue-light);}
@@ -133,8 +133,8 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .rich-card{border-radius:12px;overflow:visible;cursor:pointer;background:#fff;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);}
 .rich-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.13);}
 .rich-card.editing{cursor:default;border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,111,168,0.15);}
-.card-img-area{width:100%;height:140px;object-fit:cover;display:block;border-radius:12px 12px 0 0;}
-.card-img-grad{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;border-radius:12px 12px 0 0;}
+.card-img-area{width:100%;height:200px;object-fit:cover;display:block;border-radius:12px 12px 0 0;}
+.card-img-grad{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:52px;border-radius:12px 12px 0 0;}
 .gi-blue{background:linear-gradient(135deg,#a8edea,#fed6e3);}
 .gi-yellow{background:linear-gradient(135deg,#ffecd2,#fcb69f);}
 .gi-green{background:linear-gradient(135deg,#d4fc79,#96e6a1);}
@@ -146,7 +146,7 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 .cc-green{background:#e8f5e9;}
 .cc-pink{background:#fce4ec;}
 .card-body{padding:10px 12px 6px;}
-.card-text{font-size:13px;font-weight:500;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+.card-text{font-size:15px;font-weight:500;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-all;}
 .card-stamps{font-size:16px;padding:2px 0;display:flex;gap:3px;flex-wrap:wrap;}
 .card-ts{font-size:10px;color:#bbb;margin-top:3px;font-style:italic;}
 .admin-reply-band{background:#e8f5f0;border-top:2px solid #5aad88;padding:8px 12px;font-size:11px;font-weight:500;color:#2e7a55;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
@@ -250,6 +250,70 @@ input[type=color].bg-custom-color{width:20px;height:20px;border-radius:50%;borde
 ::-webkit-scrollbar{height:4px;width:4px;}
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.04);}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px;}
+/* ===== 管理者生徒ポップアップ ===== */
+.admin-student-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(4px);z-index:400;
+  display:flex;align-items:stretch;justify-content:center;
+  padding:0;
+}
+.admin-student-popup{
+  background:linear-gradient(160deg,#f0f4ff 0%,#fdf6ff 40%,#f0fff4 100%);
+  width:100%;max-width:700px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:slideUp .25s ease-out;
+}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.admin-student-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(255,255,255,0.8);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,0,0,0.07);
+  flex-shrink:0;
+}
+.admin-student-title{font-size:18px;font-weight:800;color:#3a6fa8;}
+.admin-student-body{flex:1;overflow-y:auto;padding:16px 20px 24px;}
+.admin-month-block{margin-bottom:16px;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.admin-month-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f0f4ff;border-bottom:1px solid rgba(0,0,0,0.06);}
+.admin-month-title{font-size:14px;font-weight:800;color:#3a6fa8;}
+.admin-month-count{font-size:11px;color:#aaa;font-weight:500;}
+.admin-month-body{padding:10px 12px;background:#fff;}
+
+/* ===== カードポップアップ編集 ===== */
+.card-popup-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(3px);
+  z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;
+}
+.card-popup-box{
+  background:#fff;border-radius:20px;
+  width:100%;max-width:480px;max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 12px 40px rgba(0,0,0,0.2);
+  border:1px solid rgba(0,0,0,0.08);
+  animation:popupIn .2s ease-out;
+}
+@keyframes popupIn{
+  from{transform:scale(0.92);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+.card-popup-img{width:100%;max-height:220px;object-fit:cover;border-radius:16px 16px 0 0;display:block;}
+.card-popup-img-grad{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:60px;border-radius:16px 16px 0 0;}
+.card-popup-body{padding:16px 18px 14px;}
+.card-popup-cp{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.card-popup-cp .cp-dot{width:24px;height:24px;}
+.card-popup-ta{
+  font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px;font-weight:500;
+  width:100%;border:1.5px solid var(--blue);border-radius:10px;
+  padding:10px 12px;resize:none;outline:none;color:var(--ink);
+  background:#fff;line-height:1.7;overflow:hidden;min-height:80px;
+}
+.card-popup-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 18px 16px;border-top:1px solid rgba(0,0,0,0.06);gap:8px;flex-wrap:wrap;}
+.card-popup-hint{font-size:11px;color:#aaa;font-weight:500;}
+.card-popup-btns{display:flex;gap:8px;}
+
 @media print{.no-print{display:none!important;}#screen-board{display:block!important;}.board-inner{height:auto;}.cols-scroll{overflow:visible;flex-wrap:wrap;height:auto;}.padlet-col{break-inside:avoid;margin-bottom:12px;}.col-cards{overflow:visible;max-height:none;}}
 </style>
 </head>
@@ -726,56 +790,182 @@ function makeCard(col,c,isReadOnly){
 }
 
 function enterEditMode(card,col,c,bodyEl){
-  card.classList.add('editing');bodyEl.style.display='none';
-  const editArea=document.createElement('div');editArea.className='card-edit-area';editArea.style.background=CARD_HEX[c.color||'white']||'#fff';
+  card.classList.add('editing');
   let editColor=c.color||'white';
-  const cp=document.createElement('div');cp.className='color-picker';
-  buildColorPicker(cp,editColor,(nc)=>{editColor=nc;editArea.style.background=CARD_HEX[nc]||'#fff';const gd=card.querySelector('.card-img-grad');if(gd){gd.className='card-img-grad '+(CARD_GRADS[nc]||'gi-white');gd.textContent=CARD_EMOJIS[nc]||'📝';}});
-  editArea.appendChild(cp);
   let newImgData=c.img||null,imgChanged=false;
-  const ta=document.createElement('textarea');ta.value=c.text||'';ta.placeholder='入力… Enter で改行 / ボタンで保存';
-  ta.onclick=(e)=>e.stopPropagation();ta.addEventListener('input',()=>autoResize(ta));
-  ta.addEventListener('keydown',(e)=>{if(e.key==='Escape'){e.stopPropagation();cancelEdit();}});
-  editArea.appendChild(ta);setTimeout(()=>{autoResize(ta);ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},30);
-  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
+
+  // ===== オーバーレイ作成 =====
+  const overlay=document.createElement('div');overlay.className='card-popup-overlay';
+
+  const box=document.createElement('div');box.className='card-popup-box';
+  box.style.background=CARD_HEX[editColor]||'#fff';
+
+  // 画像エリア
+  if(c.img){
+    const img=document.createElement('img');img.src=c.img;img.className='card-popup-img';box.appendChild(img);
+  } else {
+    const gd=document.createElement('div');gd.className='card-popup-img-grad '+(CARD_GRADS[editColor]||'gi-white');gd.textContent=CARD_EMOJIS[editColor]||'📝';box.appendChild(gd);
+  }
+
+  const body=document.createElement('div');body.className='card-popup-body';
+
+  // カラーピッカー
+  const cp=document.createElement('div');cp.className='card-popup-cp color-picker';
+  buildColorPicker(cp,editColor,(nc)=>{
+    editColor=nc;
+    box.style.background=CARD_HEX[nc]||'#fff';
+    const gd=box.querySelector('.card-popup-img-grad');
+    if(gd){gd.className='card-popup-img-grad '+(CARD_GRADS[nc]||'gi-white');gd.textContent=CARD_EMOJIS[nc]||'📝';}
+  });
+  body.appendChild(cp);
+
+  // テキスト入力
+  const ta=document.createElement('textarea');ta.className='card-popup-ta';
+  ta.value=c.text||'';ta.placeholder='ここに入力... （Enter で改行）';
+  ta.addEventListener('input',()=>autoResize(ta));
+  body.appendChild(ta);
+
+  // 画像変更ボタン
+  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;';
   const imgLabel=document.createElement('label');imgLabel.className='img-change-label';imgLabel.textContent='📷 画像を変更';
   const imgFile=document.createElement('input');imgFile.type='file';imgFile.accept='image/*';imgFile.style.display='none';
-  imgFile.onchange=async()=>{if(!imgFile.files[0])return;const raw=await readImg(imgFile.files[0]);newImgData=await compressImg(raw,600,400,0.75);imgChanged=true;const ex=card.querySelector('.card-img-area,.card-img-grad');const ni=document.createElement('img');ni.src=newImgData;ni.className='card-img-area';if(ex)ex.replaceWith(ni);else card.insertBefore(ni,editArea);};
+  imgFile.onchange=async()=>{
+    if(!imgFile.files[0])return;
+    const raw=await readImg(imgFile.files[0]);
+    newImgData=await compressImg(raw,800,600,0.8);imgChanged=true;
+    const ex=box.querySelector('.card-popup-img,.card-popup-img-grad');
+    const ni=document.createElement('img');ni.src=newImgData;ni.className='card-popup-img';
+    if(ex)ex.replaceWith(ni);else box.insertBefore(ni,body);
+  };
   imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);
-  if(c.img){const clrBtn=document.createElement('button');clrBtn.className='e-btn';clrBtn.textContent='画像を削除';clrBtn.onclick=(e)=>{e.stopPropagation();newImgData=null;imgChanged=true;const ei=card.querySelector('.card-img-area');if(ei){const gd=document.createElement('div');gd.className='card-img-grad '+(CARD_GRADS[editColor]||'gi-white');gd.textContent=CARD_EMOJIS[editColor]||'📝';ei.replaceWith(gd);}clrBtn.style.display='none';};imgRow.appendChild(clrBtn);}
-  editArea.appendChild(imgRow);
-  const btnRow=document.createElement('div');btnRow.className='edit-btns-row';
-  const hint=document.createElement('span');hint.className='edit-hint';hint.textContent='ボタンで保存';
-  const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';cancelBtn.onclick=(e)=>{e.stopPropagation();cancelEdit();};
-  const saveBtn=document.createElement('button');saveBtn.className='e-btn primary';saveBtn.textContent='保存';saveBtn.onclick=(e)=>{e.stopPropagation();doSave();};
-  function doSave(){c.text=ta.value;c.color=editColor;if(imgChanged)c.img=newImgData;renderCols();autoSave();}
-  function cancelEdit(){card.classList.remove('editing');editArea.remove();bodyEl.style.display='';}
-  btnRow.appendChild(hint);btnRow.appendChild(cancelBtn);btnRow.appendChild(saveBtn);editArea.appendChild(btnRow);bodyEl.after(editArea);
+  if(c.img){
+    const clrBtn=document.createElement('button');clrBtn.className='e-btn';clrBtn.textContent='画像を削除';
+    clrBtn.onclick=()=>{
+      newImgData=null;imgChanged=true;
+      const ei=box.querySelector('.card-popup-img');
+      if(ei){const gd=document.createElement('div');gd.className='card-popup-img-grad '+(CARD_GRADS[editColor]||'gi-white');gd.textContent=CARD_EMOJIS[editColor]||'📝';ei.replaceWith(gd);}
+      clrBtn.style.display='none';
+    };
+    imgRow.appendChild(clrBtn);
+  }
+  body.appendChild(imgRow);
+  box.appendChild(body);
+
+  // フッター
+  const footer=document.createElement('div');footer.className='card-popup-footer';
+  const hint=document.createElement('span');hint.className='card-popup-hint';hint.textContent='Enter で改行';
+  const btnWrap=document.createElement('div');btnWrap.className='card-popup-btns';
+  const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';
+  const saveBtn=document.createElement('button');saveBtn.className='e-btn primary';saveBtn.textContent='保存';
+
+  function doSave(){
+    c.text=ta.value;c.color=editColor;if(imgChanged)c.img=newImgData;
+    overlay.remove();card.classList.remove('editing');
+    renderCols();autoSave();
+  }
+  function cancelEdit(){
+    overlay.remove();card.classList.remove('editing');
+  }
+
+  cancelBtn.onclick=cancelEdit;saveBtn.onclick=doSave;
+  btnWrap.appendChild(cancelBtn);btnWrap.appendChild(saveBtn);
+  footer.appendChild(hint);footer.appendChild(btnWrap);
+  box.appendChild(footer);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // オーバーレイ外クリックでキャンセル
+  overlay.onclick=(e)=>{if(e.target===overlay)cancelEdit();};
+
+  setTimeout(()=>{autoResize(ta);ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},50);
 }
 
 function showNewCardInput(col,cardsEl){
-  const ex=cardsEl.querySelector('.new-card-wrap');if(ex){ex.querySelector('textarea').focus();return;}
-  const hint=cardsEl.querySelector('.empty-hint');if(hint)hint.remove();
+  // 既にポップアップが開いていたら閉じる
+  const existing=document.querySelector('.card-popup-overlay');
+  if(existing)existing.remove();
+
   let selColor='white',imgData=null;
-  const wrap=document.createElement('div');wrap.className='new-card-wrap';
-  const cp=document.createElement('div');cp.className='color-picker';buildColorPicker(cp,'white',(c)=>{selColor=c;wrap.style.background=CARD_HEX[c]||'#fff';});wrap.appendChild(cp);
-  const ta=document.createElement('textarea');ta.placeholder='入力… Enter で改行 / ボタンで追加';
+
+  // ===== ポップアップオーバーレイ =====
+  const overlay=document.createElement('div');overlay.className='card-popup-overlay';
+  const box=document.createElement('div');box.className='card-popup-box';
+  box.style.background=CARD_HEX[selColor]||'#fff';
+
+  // グラデーション画像エリア（新規なのでデフォルト表示）
+  const gd=document.createElement('div');
+  gd.className='card-popup-img-grad '+(CARD_GRADS[selColor]||'gi-white');
+  gd.textContent=CARD_EMOJIS[selColor]||'📝';
+  box.appendChild(gd);
+
+  const body=document.createElement('div');body.className='card-popup-body';
+
+  // タイトル
+  const title=document.createElement('div');
+  title.style.cssText='font-size:13px;font-weight:800;color:#888;margin-bottom:10px;';
+  title.textContent='「'+col.title+'」に追加';
+  body.appendChild(title);
+
+  // カラーピッカー
+  const cp=document.createElement('div');cp.className='card-popup-cp color-picker';
+  buildColorPicker(cp,'white',(c)=>{
+    selColor=c;
+    box.style.background=CARD_HEX[c]||'#fff';
+    gd.className='card-popup-img-grad '+(CARD_GRADS[c]||'gi-white');
+    gd.textContent=CARD_EMOJIS[c]||'📝';
+  });
+  body.appendChild(cp);
+
+  // テキスト入力
+  const ta=document.createElement('textarea');ta.className='card-popup-ta';
+  ta.placeholder='ここに入力... （Enter で改行）';
   ta.addEventListener('input',()=>autoResize(ta));
-  ta.addEventListener('keydown',(e)=>{if(e.key==='Escape')wrap.remove();});
-  wrap.appendChild(ta);
-  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:6px;align-items:center;';
+  body.appendChild(ta);
+
+  // 画像追加
+  const imgRow=document.createElement('div');imgRow.style.cssText='display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;';
   const imgLabel=document.createElement('label');imgLabel.className='img-add-label';imgLabel.textContent='📷 画像を追加';
   const imgFile=document.createElement('input');imgFile.type='file';imgFile.accept='image/*';imgFile.style.display='none';
-  const imgPrev=document.createElement('img');imgPrev.style.cssText='max-width:100%;max-height:70px;object-fit:cover;border-radius:8px;margin-top:4px;display:none;';
-  imgFile.onchange=async()=>{if(!imgFile.files[0])return;const raw=await readImg(imgFile.files[0]);imgData=await compressImg(raw,600,400,0.75);imgPrev.src=imgData;imgPrev.style.display='block';};
-  imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);wrap.appendChild(imgRow);wrap.appendChild(imgPrev);
-  const btns=document.createElement('div');btns.className='nc-btns';
-  const nchint=document.createElement('span');nchint.className='nc-hint';nchint.textContent='ボタンで追加';
-  const cancelBtn=document.createElement('button');cancelBtn.className='nc-btn';cancelBtn.textContent='キャンセル';
-  cancelBtn.onclick=()=>{wrap.remove();if(!col.cards||col.cards.length===0){const e=document.createElement('div');e.className='empty-hint';e.textContent='＋ボタンから追加しよう';cardsEl.insertBefore(e,cardsEl.firstChild);}};
-  const addBtn=document.createElement('button');addBtn.className='nc-btn primary';addBtn.textContent='追加';
-  function doAdd(){const txt=ta.value;if(!txt.trim()&&!imgData)return;if(!col.cards)col.cards=[];col.cards.push({id:uid(),text:txt,ts:nowTs(),createdTs:nowTs(),likes:0,liked:false,comments:[],reply:'',replyTs:0,color:selColor,stamps:[],img:imgData||null});renderCols();autoSave();}
-  addBtn.onclick=()=>doAdd();btns.appendChild(nchint);btns.appendChild(cancelBtn);btns.appendChild(addBtn);wrap.appendChild(btns);cardsEl.appendChild(wrap);setTimeout(()=>ta.focus(),30);
+  imgFile.onchange=async()=>{
+    if(!imgFile.files[0])return;
+    const raw=await readImg(imgFile.files[0]);
+    imgData=await compressImg(raw,800,600,0.8);
+    const ex=box.querySelector('.card-popup-img,.card-popup-img-grad');
+    const ni=document.createElement('img');ni.src=imgData;ni.className='card-popup-img';
+    if(ex)ex.replaceWith(ni);else box.insertBefore(ni,body);
+  };
+  imgLabel.appendChild(imgFile);imgRow.appendChild(imgLabel);
+  body.appendChild(imgRow);
+  box.appendChild(body);
+
+  // フッター
+  const footer=document.createElement('div');footer.className='card-popup-footer';
+  const hint=document.createElement('span');hint.className='card-popup-hint';hint.textContent='Enter で改行';
+  const btnWrap=document.createElement('div');btnWrap.className='card-popup-btns';
+  const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';
+  const addBtn=document.createElement('button');addBtn.className='e-btn primary';addBtn.textContent='追加';
+
+  function doAdd(){
+    const txt=ta.value;
+    if(!txt.trim()&&!imgData)return;
+    if(!col.cards)col.cards=[];
+    col.cards.push({id:uid(),text:txt,ts:nowTs(),createdTs:nowTs(),likes:0,liked:false,comments:[],reply:'',replyTs:0,color:selColor,stamps:[],img:imgData||null});
+    overlay.remove();
+    renderCols();autoSave();
+  }
+  function doCancel(){overlay.remove();}
+
+  cancelBtn.onclick=doCancel;addBtn.onclick=doAdd;
+  btnWrap.appendChild(cancelBtn);btnWrap.appendChild(addBtn);
+  footer.appendChild(hint);footer.appendChild(btnWrap);
+  box.appendChild(footer);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // オーバーレイ外クリックでキャンセル
+  overlay.onclick=(e)=>{if(e.target===overlay)doCancel();};
+
+  setTimeout(()=>{ta.focus();},50);
 }
 
 // ===== コメント・スタンプモーダル（生徒用・管理者用共通） =====
@@ -922,15 +1112,30 @@ function renderComments(c,sem,num){
     }
     header.appendChild(who);header.appendChild(rightHead);
     // テキスト
+    const txtRow=document.createElement('div');txtRow.style.cssText='display:flex;align-items:flex-start;gap:6px;';
     const txtDiv=document.createElement('div');
     if(cm.isStamp){
-      txtDiv.style.cssText='font-size:28px;line-height:1.4;';
+      txtDiv.style.cssText='font-size:28px;line-height:1.4;flex:1;';
     } else {
-      txtDiv.style.cssText='font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;white-space:pre-wrap;word-break:break-all;';
+      txtDiv.style.cssText='font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;white-space:pre-wrap;word-break:break-all;flex:1;';
     }
     txtDiv.textContent=cm.text;
-    const actionRow=document.createElement('div');// 編集/削除後の状態管理用ダミー
-    el.appendChild(header);el.appendChild(txtDiv);el.appendChild(actionRow);
+    // コピーボタン（スタンプ以外）
+    if(!cm.isStamp){
+      const copyBtn=document.createElement('button');
+      copyBtn.style.cssText='font-size:10px;padding:2px 6px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:#fff;color:#aaa;cursor:pointer;flex-shrink:0;margin-top:1px;';
+      copyBtn.textContent='📋';copyBtn.title='コピー';
+      copyBtn.onclick=async(e)=>{
+        e.stopPropagation();
+        try{await navigator.clipboard.writeText(cm.text);copyBtn.textContent='✓';setTimeout(()=>{copyBtn.textContent='📋';},1500);}
+        catch(e){copyBtn.textContent='✗';}
+      };
+      txtRow.appendChild(txtDiv);txtRow.appendChild(copyBtn);
+    } else {
+      txtRow.appendChild(txtDiv);
+    }
+    const actionRow=document.createElement('div');
+    el.appendChild(header);el.appendChild(txtRow);el.appendChild(actionRow);
     cl.appendChild(el);
   });
 }
@@ -981,6 +1186,86 @@ window.switchTab=switchTab;
 window.toggleFilter=function(){showUnreadOnly=!showUnreadOnly;document.getElementById('filterBtn').textContent=showUnreadOnly?'全件表示':'投稿ありのみ';renderAdminCols();}
 window.toggleAllAcc=function(){allAccOpen=!allAccOpen;document.querySelectorAll('.admin-col-body').forEach(b=>b.classList.toggle('open',allAccOpen));document.querySelectorAll('.acc-chevron').forEach(c=>c.classList.toggle('open',allAccOpen));document.getElementById('toggleAllBtn').textContent=allAccOpen?'すべて閉じる':'すべて開く';}
 
+// 管理者：生徒のカード一覧をポップアップで全画面表示
+function openAdminStudentPopup(num,brd){
+  const existing=document.querySelector('.admin-student-overlay');
+  if(existing)existing.remove();
+
+  const overlay=document.createElement('div');overlay.className='admin-student-overlay';
+  const popup=document.createElement('div');popup.className='admin-student-popup';
+
+  // ヘッダー
+  const hdr=document.createElement('div');hdr.className='admin-student-header';
+  const title=document.createElement('div');title.className='admin-student-title';
+  title.textContent='No.'+num+(state.numNames[num]?' '+state.numNames[num]:'');
+  const closeBtn=document.createElement('button');closeBtn.className='btn sm';closeBtn.textContent='✕ 閉じる';
+  closeBtn.onclick=()=>overlay.remove();
+  hdr.appendChild(title);hdr.appendChild(closeBtn);
+  popup.appendChild(hdr);
+
+  // ボディ（月ごとのカード一覧）
+  const body=document.createElement('div');body.className='admin-student-body';
+
+  if(!brd.cols||(brd.cols||[]).flatMap(c=>c.cards||[]).length===0){
+    const empty=document.createElement('div');empty.className='empty-hint';empty.style.padding='40px 0';empty.textContent='投稿なし';body.appendChild(empty);
+  } else {
+    (brd.cols||[]).forEach(col=>{
+      const colCards=col.cards||[];
+      if(colCards.length===0)return;
+      const monthBlock=document.createElement('div');monthBlock.className='admin-month-block';
+      const monthHdr=document.createElement('div');monthHdr.className='admin-month-header';
+      monthHdr.style.cursor='pointer';monthHdr.style.userSelect='none';
+      const monthTitle=document.createElement('span');monthTitle.className='admin-month-title';monthTitle.textContent=col.title;
+      const monthRight=document.createElement('div');monthRight.style.cssText='display:flex;align-items:center;gap:8px;';
+      const monthCount=document.createElement('span');monthCount.className='admin-month-count';monthCount.textContent=colCards.length+'件';
+      // 折りたたみ矢印
+      const monthChevron=document.createElement('span');
+      monthChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;transform:rotate(180deg);';
+      monthChevron.textContent='▼';
+      // セクション削除
+      const colDelBtn=document.createElement('button');
+      colDelBtn.style.cssText='font-size:11px;color:#e57373;background:none;border:1px solid #ffcdd2;border-radius:6px;padding:2px 7px;cursor:pointer;font-weight:700;';
+      colDelBtn.textContent='削除';
+      colDelBtn.onclick=async(e)=>{
+        e.stopPropagation();
+        if(!confirm('「'+col.title+'」セクションを削除しますか？'))return;
+        brd.cols=brd.cols.filter(c=>c.id!==col.id);
+        await saveBoardDirect(adminSem,num);
+        overlay.remove();renderAdminCols();
+      };
+      monthRight.appendChild(monthCount);monthRight.appendChild(colDelBtn);monthRight.appendChild(monthChevron);
+      monthHdr.appendChild(monthTitle);monthHdr.appendChild(monthRight);
+      const monthBody=document.createElement('div');monthBody.className='admin-month-body';
+      colCards.forEach(card=>{
+        const ac=buildAdminCardEl(col,card,num,brd);
+        monthBody.appendChild(ac);
+      });
+      // 折りたたみトグル（デフォルトは開いた状態）
+      monthHdr.onclick=()=>{
+        const isOpen=monthBody.style.display!=='none';
+        monthBody.style.display=isOpen?'none':'block';
+        monthChevron.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
+      };
+      monthBlock.appendChild(monthHdr);monthBlock.appendChild(monthBody);
+      body.appendChild(monthBlock);
+    });
+  }
+
+  // ゴミ箱
+  if(brd.trash){
+    const trashBlock=buildAdminTrashEl(num,brd);
+    trashBlock.style.marginTop='8px';
+    body.appendChild(trashBlock);
+  }
+
+  popup.appendChild(body);
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  // オーバーレイ外クリックで閉じる
+  overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
+}
+
 function renderAdminCols(){
   const wrap=document.getElementById('adminColsWrap');wrap.innerHTML='';
   const sb=state.sems[adminSem];
@@ -1004,77 +1289,9 @@ function renderAdminCols(){
     right.appendChild(countEl);right.appendChild(chevron);
     hdr.appendChild(left);hdr.appendChild(right);
 
-    const body=document.createElement('div');body.className='admin-col-body';
-
-    // 月ごとの内側アコーディオンを作成
-    (brd.cols||[]).forEach(col=>{
-      const colCards=col.cards||[];
-      if(showUnreadOnly&&colCards.length===0)return;
-
-      const monthBlock=document.createElement('div');
-      monthBlock.style.cssText='margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);';
-
-      // 月ヘッダー
-      const monthHdr=document.createElement('div');
-      monthHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f0f4ff;cursor:pointer;user-select:none;';
-      const monthTitle=document.createElement('span');monthTitle.style.cssText='font-size:13px;font-weight:800;color:#3a6fa8;';monthTitle.textContent=col.title;
-      const monthRight=document.createElement('div');monthRight.style.cssText='display:flex;align-items:center;gap:8px;';
-      const monthCount=document.createElement('span');monthCount.style.cssText='font-size:11px;color:#aaa;font-weight:500;';monthCount.textContent=colCards.length+'件';
-      const monthChevron=document.createElement('span');monthChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;';monthChevron.textContent='▼';
-      // セクション削除ボタン（管理者のみ）
-      const colDelBtn=document.createElement('button');
-      colDelBtn.style.cssText='font-size:11px;color:#e57373;background:none;border:1px solid #ffcdd2;border-radius:6px;padding:2px 7px;cursor:pointer;font-weight:700;';
-      colDelBtn.textContent='削除';
-      colDelBtn.onclick=async(e)=>{
-        e.stopPropagation();
-        if(!confirm('「'+col.title+'」セクションを削除しますか？\nカードも全て削除されます。'))return;
-        brd.cols=brd.cols.filter(c=>c.id!==col.id);
-        await saveBoardDirect(adminSem,i);
-        renderAdminCols();
-      };
-      monthRight.appendChild(monthCount);monthRight.appendChild(colDelBtn);monthRight.appendChild(monthChevron);
-      monthHdr.appendChild(monthTitle);monthHdr.appendChild(monthRight);
-
-      // 月本体
-      const monthBody=document.createElement('div');monthBody.setAttribute('data-month-body','1');monthBody.style.cssText='display:none;padding:8px 10px;background:#fff;';
-
-      if(colCards.length===0){
-        const e=document.createElement('div');e.className='empty-hint';e.textContent='投稿なし';monthBody.appendChild(e);
-      } else {
-        colCards.forEach(card=>{
-          const ac=buildAdminCardEl(col,card,i,brd);
-          monthBody.appendChild(ac);
-        });
-      }
-
-      monthHdr.onclick=()=>{
-        const isOpen=monthBody.style.display!=='none';
-        monthBody.style.display=isOpen?'none':'block';
-        monthChevron.style.transform=isOpen?'':'rotate(180deg)';
-      };
-      monthBlock.appendChild(monthHdr);monthBlock.appendChild(monthBody);
-      body.appendChild(monthBlock);
-    });
-
-    // ゴミ箱
-    if(brd.trash){
-      const trashBlock=buildAdminTrashEl(i,brd);
-      body.appendChild(trashBlock);
-    }
-
-    if(body.children.length===0){
-      const e=document.createElement('div');e.className='empty-hint';e.textContent='投稿なし';body.appendChild(e);
-    }
-
-    hdr.onclick=()=>{
-      const isOpen=body.classList.contains('open');
-      // 全部閉じる
-      wrap.querySelectorAll('.admin-col-body').forEach(b=>b.classList.remove('open'));
-      wrap.querySelectorAll('.acc-chevron').forEach(c=>c.classList.remove('open'));
-      // 閉じていたものだけ開く
-      if(!isOpen){body.classList.add('open');chevron.classList.add('open');}
-    };
-    colCard.appendChild(hdr);colCard.appendChild(body);wrap.appendChild(colCard);
+    // クリックでポップアップ表示
+    hdr.onclick=()=>openAdminStudentPopup(i,brd);
+    colCard.appendChild(hdr);wrap.appendChild(colCard);
   }
 }
 
@@ -1082,126 +1299,233 @@ function renderAdminCols(){
 function buildAdminCardEl(col,card,num,brd){
   const cc=CARD_CLASS[card.color||'white']||'cc-white';
   const ac=document.createElement('div');ac.className='admin-card-item '+cc;
-  ac.style.cssText='border-radius:10px;border:1px solid rgba(0,0,0,0.08);margin-bottom:8px;background:#fff;overflow:hidden;cursor:pointer;';
+  ac.style.cssText='border-radius:10px;border:1px solid rgba(0,0,0,0.08);margin-bottom:10px;background:#fff;overflow:hidden;';
 
-  // ===== カードヘッダー：テキスト冒頭を直接表示 =====
-  const cardHdr=document.createElement('div');
-  cardHdr.style.cssText='padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;';
+  // ===== 画像 =====
+  if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:120px;object-fit:cover;border-radius:10px 10px 0 0;display:block;';ac.appendChild(im);}
 
-  const cardLeft=document.createElement('div');cardLeft.style.cssText='flex:1;overflow:hidden;';
+  // ===== 本文エリア =====
+  const body=document.createElement('div');body.style.cssText='padding:10px 12px 6px;';
 
-  // テキスト冒頭（2行分）
-  const previewTxt=document.createElement('div');
-  const previewText=card.text||(card.img?'📷 画像':'（空）');
-  const lines=previewText.split('\n');
-  const preview=lines.slice(0,2).join('\n')+(lines.length>2||previewText.length>40?'..':'');
-  previewTxt.className='card-preview-txt';previewTxt.style.cssText='font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;white-space:pre-wrap;word-break:break-all;';
-  previewTxt.textContent=preview;
-
-  // 日付・返信済みフラグ
-  const previewMeta=document.createElement('div');
-  previewMeta.style.cssText='font-size:10px;color:#aaa;margin-top:3px;display:flex;align-items:center;gap:6px;';
-  const metaDate=document.createElement('span');metaDate.textContent='📅'+(card.createdTs||card.ts);
-  previewMeta.appendChild(metaDate);
-  if(card.reply){
-    const repliedBadge=document.createElement('span');
-    repliedBadge.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;';
-    repliedBadge.textContent='返信済✓';
-    previewMeta.appendChild(repliedBadge);
-  }
-
-  cardLeft.appendChild(previewTxt);cardLeft.appendChild(previewMeta);
-
-  const cardChevron=document.createElement('span');
-  cardChevron.style.cssText='font-size:11px;color:#aaa;transition:transform .2s;flex-shrink:0;margin-top:2px;';
-  cardChevron.textContent='▼';
-
-  cardHdr.appendChild(cardLeft);cardHdr.appendChild(cardChevron);
-  ac.appendChild(cardHdr);
-
-  // ===== カード詳細（開いた時のみ表示） =====
-  const cardDetail=document.createElement('div');
-  cardDetail.style.cssText='display:none;border-top:1px solid rgba(0,0,0,0.07);padding:10px 12px 12px;';
-
-  // 画像
-  if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;';cardDetail.appendChild(im);}
-
-  // テキスト全文
-  if(card.text){
-    const t=document.createElement('div');
-    t.style.cssText='white-space:pre-wrap;word-break:break-all;font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;margin-bottom:8px;padding:8px 10px;background:#fafafa;border-radius:8px;border:1px solid rgba(0,0,0,0.06);';
-    t.textContent=card.text;cardDetail.appendChild(t);
-  }
-  if(card.stamps&&card.stamps.length){const s=document.createElement('div');s.style.cssText='font-size:15px;margin-bottom:6px;';s.textContent=card.stamps.join('');cardDetail.appendChild(s);}
-
-  // 先生コメント編集欄
-  const replyWrap=document.createElement('div');
-  replyWrap.style.cssText='background:#e8f5f0;border:1.5px solid #5aad88;border-radius:8px;padding:8px 10px;margin-bottom:8px;';
-  replyWrap.innerHTML='<div style="font-size:10px;font-weight:700;color:#3a7a55;opacity:.7;margin-bottom:4px;">✏️ 先生からのコメント</div>';
-  const rta=document.createElement('textarea');rta.value=card.reply||'';rta.placeholder='先生からのコメントを入力...';
-  rta.style.cssText='width:100%;font-size:12px;font-family:M PLUS Rounded 1c,sans-serif;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:7px;background:#fff;resize:none;outline:none;min-height:36px;overflow:hidden;';
-  rta.addEventListener('input',()=>autoResize(rta));
-  rta.onclick=(e)=>e.stopPropagation();
-  const rsave=document.createElement('button');rsave.className='btn primary sm';rsave.style.marginTop='5px';rsave.textContent='保存';
-  rsave.onclick=async(e)=>{
+  // テキスト全文 + コピー + 編集ボタン
+  const txtRow=document.createElement('div');txtRow.style.cssText='display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;';
+  const t=document.createElement('div');
+  t.style.cssText='flex:1;white-space:pre-wrap;word-break:break-all;font-size:13px;font-weight:500;color:#2a2a2a;line-height:1.6;padding:8px 10px;background:#fafafa;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer;';
+  t.textContent=card.text||'（未入力）';
+  if(!card.text)t.style.color='#aaa';
+  t.title='タップして編集';
+  // 右側ボタン群
+  const btnCol=document.createElement('div');btnCol.style.cssText='display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px;';
+  // コピーボタン
+  const copyBtn=document.createElement('button');
+  copyBtn.style.cssText='font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);background:#fff;color:#555;cursor:pointer;';
+  copyBtn.textContent='📋';copyBtn.title='コピー';
+  copyBtn.onclick=async(e)=>{
     e.stopPropagation();
-    if(card.reply!==rta.value){card.reply=rta.value;card.replyTs=Date.now();}
-    // 返信済みバッジを更新
-    const existBadge=previewMeta.querySelector('span[style*="e8f5f0"]');
-    if(card.reply&&!existBadge){
-      const rb=document.createElement('span');rb.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;';rb.textContent='返信済✓';previewMeta.appendChild(rb);
-    }
-    await saveBoardDirect(adminSem,num);
-    rsave.textContent='✓ 保存済';setTimeout(()=>{rsave.textContent='保存';},1500);
+    try{await navigator.clipboard.writeText(card.text||'');copyBtn.textContent='✓';setTimeout(()=>{copyBtn.textContent='📋';},1500);}
+    catch(e){copyBtn.textContent='✗';}
   };
-  replyWrap.appendChild(rta);replyWrap.appendChild(rsave);cardDetail.appendChild(replyWrap);
+  // 編集ボタン
+  const editBtn=document.createElement('button');
+  editBtn.style.cssText='font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;border:1px solid rgba(58,111,168,0.3);background:#e8eef8;color:#3a6fa8;cursor:pointer;';
+  editBtn.textContent='✏️';editBtn.title='編集';
+  // テキストクリック・編集ボタン共通のポップアップ処理
+  function openCardEditPopup(){
+    const existing=document.querySelector('.card-popup-overlay');if(existing)existing.remove();
+    const overlay=document.createElement('div');overlay.className='card-popup-overlay';
+    const box=document.createElement('div');box.className='card-popup-box';
+    const grad=CARD_GRADS[card.color||'white']||'gi-white';
+    const emoji=CARD_EMOJIS[card.color||'white']||'📝';
+    // グラデーション or 画像
+    if(card.img){const im=document.createElement('img');im.src=card.img;im.className='card-popup-img';box.appendChild(im);}
+    else{const gd=document.createElement('div');gd.className='card-popup-img-grad '+grad;gd.textContent=emoji;box.appendChild(gd);}
+    const bdy=document.createElement('div');bdy.className='card-popup-body';
+    const lbl=document.createElement('div');lbl.style.cssText='font-size:13px;font-weight:800;color:#888;margin-bottom:10px;';lbl.textContent='カードを編集';bdy.appendChild(lbl);
+    const ta=document.createElement('textarea');ta.className='card-popup-ta';ta.value=card.text||'';ta.placeholder='ここに入力...';
+    ta.addEventListener('input',()=>autoResize(ta));
+    bdy.appendChild(ta);box.appendChild(bdy);
+    const footer=document.createElement('div');footer.className='card-popup-footer';
+    const hint=document.createElement('span');hint.className='card-popup-hint';hint.textContent='Enter で改行';
+    const btns=document.createElement('div');btns.className='card-popup-btns';
+    const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';
+    const saveBtn=document.createElement('button');saveBtn.className='e-btn primary';saveBtn.textContent='保存';
+    saveBtn.onclick=async()=>{
+      card.text=ta.value;
+      t.textContent=card.text||'（未入力）';
+      t.style.color=card.text?'#2a2a2a':'#aaa';
+      overlay.remove();
+      await saveBoardDirect(adminSem,num);
+    };
+    cancelBtn.onclick=()=>overlay.remove();
+    btns.appendChild(cancelBtn);btns.appendChild(saveBtn);
+    footer.appendChild(hint);footer.appendChild(btns);
+    box.appendChild(footer);
+    overlay.appendChild(box);document.body.appendChild(overlay);
+    overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
+    setTimeout(()=>{autoResize(ta);ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},50);
+  }
+  t.onclick=openCardEditPopup;
+  editBtn.onclick=(e)=>{e.stopPropagation();openCardEditPopup();};
+  btnCol.appendChild(copyBtn);btnCol.appendChild(editBtn);
+  txtRow.appendChild(t);txtRow.appendChild(btnCol);
+  body.appendChild(txtRow);
+  if(card.stamps&&card.stamps.length){const s=document.createElement('div');s.style.cssText='font-size:15px;margin-bottom:6px;';s.textContent=card.stamps.join('');body.appendChild(s);}
 
-  // コメント確認ボタン
-  const cmtBtn=document.createElement('button');cmtBtn.className='btn sm';cmtBtn.style.cssText='width:100%;text-align:center;margin-bottom:6px;';
-  cmtBtn.textContent='💬 コメントを見る・返信する ('+(card.comments?card.comments.length:0)+'件)';
-  cmtBtn.onclick=(e)=>{e.stopPropagation();openDetail(col,card,adminSem,num,true);};
-  cardDetail.appendChild(cmtBtn);
+  // 日付・返信済みバッジ
+  const metaRow=document.createElement('div');metaRow.style.cssText='font-size:10px;color:#aaa;margin-bottom:8px;display:flex;align-items:center;gap:6px;';
+  metaRow.innerHTML='📅'+(card.createdTs||card.ts);
+  if(card.reply){
+    const rb=document.createElement('span');rb.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;margin-left:6px;';rb.textContent='返信済✓';metaRow.appendChild(rb);
+  }
+  body.appendChild(metaRow);
+  ac.appendChild(body);
 
-  // カード削除
+  // ===== 先生コメント（全文表示・クリックでポップアップ編集） =====
+  const replyWrap=document.createElement('div');
+  replyWrap.style.cssText='background:#e8f5f0;border-top:2px solid #5aad88;padding:8px 12px 10px;cursor:pointer;';
+  const replyLabel=document.createElement('div');
+  replyLabel.style.cssText='font-size:10px;font-weight:700;color:#3a7a55;opacity:.7;margin-bottom:4px;';
+  replyLabel.textContent='✏️ 先生からのコメント';
+  replyWrap.appendChild(replyLabel);
+  // 全文表示エリア
+  const replyDisp=document.createElement('div');
+  replyDisp.style.cssText='font-size:12px;font-weight:500;color:#2e7a55;line-height:1.7;white-space:pre-wrap;word-break:break-all;min-height:20px;';
+  replyDisp.textContent=card.reply||'（クリックして入力...）';
+  if(!card.reply)replyDisp.style.color='#aaa';
+  replyWrap.appendChild(replyDisp);
+  // クリックでその場編集
+  replyWrap.onclick=()=>{
+    if(replyWrap.querySelector('textarea'))return;
+    replyDisp.style.display='none';
+    const ta=document.createElement('textarea');
+    ta.value=card.reply||'';ta.placeholder='先生からのコメントを入力...';
+    ta.style.cssText='width:100%;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:6px 8px;border:1.5px solid #5aad88;border-radius:8px;background:#fff;resize:none;outline:none;overflow:hidden;min-height:60px;';
+    ta.addEventListener('input',()=>autoResize(ta));
+    const btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;margin-top:6px;justify-content:flex-end;';
+    const cancelBtn=document.createElement('button');cancelBtn.className='e-btn';cancelBtn.textContent='キャンセル';
+    const saveBtn=document.createElement('button');saveBtn.className='e-btn primary';
+    saveBtn.style.cssText='background:#3a7a55;border-color:#3a7a55;color:#fff;';saveBtn.textContent='保存';
+    saveBtn.onclick=async(e)=>{
+      e.stopPropagation();
+      card.reply=ta.value;card.replyTs=Date.now();
+      replyDisp.textContent=card.reply||'（クリックして入力...）';
+      replyDisp.style.color=card.reply?'#2e7a55':'#aaa';
+      replyDisp.style.display='';
+      ta.remove();btnRow.remove();
+      if(card.reply&&!metaRow.querySelector('span')){
+        const rb=document.createElement('span');rb.style.cssText='background:#e8f5f0;color:#3a7a55;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid #b2dfdb;margin-left:6px;';rb.textContent='返信済✓';metaRow.appendChild(rb);
+      }
+      await saveBoardDirect(adminSem,num);
+    };
+    cancelBtn.onclick=(e)=>{e.stopPropagation();ta.remove();btnRow.remove();replyDisp.style.display='';};
+    btnRow.appendChild(cancelBtn);btnRow.appendChild(saveBtn);
+    replyWrap.appendChild(ta);replyWrap.appendChild(btnRow);
+    setTimeout(()=>{autoResize(ta);ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);},30);
+  };
+  ac.appendChild(replyWrap);
+
+  // ===== コメントエリア（常時表示・クリックで編集モード） =====
+  const cmtSection=document.createElement('div');cmtSection.style.cssText='border-top:1px solid rgba(0,0,0,0.06);padding:8px 12px 10px;background:#f8f9ff;';
+
+  // ラベル + 追加ボタン
+  const cmtHeader=document.createElement('div');cmtHeader.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;';
+  const cmtLabel=document.createElement('span');cmtLabel.style.cssText='font-size:10px;font-weight:700;color:#888;';
+  cmtLabel.textContent='💬 コメント';
+  const cmtAddBtn=document.createElement('button');cmtAddBtn.className='btn primary sm';cmtAddBtn.textContent='＋ 追加';
+  cmtAddBtn.style.fontSize='10px';
+  cmtHeader.appendChild(cmtLabel);cmtHeader.appendChild(cmtAddBtn);
+  cmtSection.appendChild(cmtHeader);
+
+  // コメント一覧（常時表示）
+  const cmtList=document.createElement('div');cmtList.style.cssText='margin-bottom:6px;';
+
+  function renderInlineComments(){
+    cmtList.innerHTML='';
+    if(!card.comments||card.comments.length===0){
+      const empty=document.createElement('div');empty.style.cssText='font-size:12px;color:#ccc;padding:4px 0;';
+      empty.textContent='コメントなし';cmtList.appendChild(empty);return;
+    }
+    card.comments.forEach((cm,idx)=>{
+      const isTeacher=cm.isTeacher||false;
+      const el=document.createElement('div');
+      el.style.cssText=`padding:6px 8px;border-radius:8px;margin-bottom:4px;cursor:pointer;${isTeacher?'background:#e8f5f0;border-left:3px solid #5aad88;':'background:#f0f0f0;border-left:3px solid #ddd;'}`;
+      el.title='クリックして編集';
+      const who=document.createElement('div');who.style.cssText=`font-size:10px;font-weight:700;margin-bottom:2px;${isTeacher?'color:#3a7a55;':'color:#888;'}`;
+      who.textContent=(isTeacher?'👨‍🏫 先生':'🙋 生徒')+' · '+cm.ts;
+      const txtDiv=document.createElement('div');
+      if(cm.isStamp){txtDiv.style.cssText='font-size:20px;';txtDiv.textContent=cm.text;}
+      else{txtDiv.style.cssText='font-size:12px;font-weight:500;color:#2a2a2a;white-space:pre-wrap;word-break:break-all;';txtDiv.textContent=cm.text;}
+      el.appendChild(who);el.appendChild(txtDiv);
+      // クリックで編集モード
+      el.onclick=()=>{
+        if(el.querySelector('textarea'))return;
+        txtDiv.style.display='none';
+        const eta=document.createElement('textarea');
+        eta.value=cm.text;
+        eta.style.cssText='width:100%;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:4px 6px;border:1.5px solid var(--blue);border-radius:6px;resize:none;outline:none;margin-top:3px;overflow:hidden;';
+        eta.rows=2;
+        eta.addEventListener('input',()=>autoResize(eta));
+        const eBtns=document.createElement('div');eBtns.style.cssText='display:flex;gap:4px;margin-top:4px;';
+        const eSave=document.createElement('button');eSave.className='btn primary sm';eSave.style.fontSize='10px';eSave.textContent='保存';
+        const eDel=document.createElement('button');eDel.className='btn danger sm';eDel.style.fontSize='10px';eDel.textContent='削除';
+        const eCancel=document.createElement('button');eCancel.className='btn sm';eCancel.style.fontSize='10px';eCancel.textContent='キャンセル';
+        eSave.onclick=async(e)=>{
+          e.stopPropagation();cm.text=eta.value;
+          await saveBoardDirect(adminSem,num);
+          renderInlineComments();
+        };
+        eDel.onclick=async(e)=>{
+          e.stopPropagation();
+          if(!confirm('このコメントを削除しますか？'))return;
+          card.comments.splice(idx,1);
+          await saveBoardDirect(adminSem,num);
+          renderInlineComments();
+        };
+        eCancel.onclick=(e)=>{e.stopPropagation();renderInlineComments();};
+        eBtns.appendChild(eSave);eBtns.appendChild(eDel);eBtns.appendChild(eCancel);
+        el.appendChild(eta);el.appendChild(eBtns);
+        setTimeout(()=>autoResize(eta),20);
+      };
+      cmtList.appendChild(el);
+    });
+  }
+  renderInlineComments();
+  cmtSection.appendChild(cmtList);
+
+  // 追加ボタンをクリックで新規入力欄を表示
+  cmtAddBtn.onclick=()=>{
+    if(cmtSection.querySelector('.cmt-new-row'))return;
+    const newRow=document.createElement('div');newRow.className='cmt-new-row';newRow.style.cssText='display:flex;gap:6px;align-items:flex-end;margin-top:4px;';
+    const ta=document.createElement('textarea');
+    ta.style.cssText='flex:1;font-family:M PLUS Rounded 1c,sans-serif;font-size:12px;font-weight:500;padding:6px 8px;border:1.5px solid var(--blue);border-radius:8px;resize:none;outline:none;min-height:34px;overflow:hidden;background:#fff;';
+    ta.placeholder='先生としてコメント...';ta.rows=1;
+    ta.addEventListener('input',()=>autoResize(ta));
+    const sendBtn=document.createElement('button');sendBtn.className='btn primary sm';sendBtn.style.cssText='flex-shrink:0;';sendBtn.textContent='送信';
+    sendBtn.onclick=async()=>{
+      const txt=ta.value.trim();if(!txt)return;
+      if(!card.comments)card.comments=[];
+      card.comments.push({id:uid(),text:txt,ts:nowTs(),isTeacher:true});
+      newRow.remove();renderInlineComments();
+      await saveBoardDirect(adminSem,num);
+    };
+    newRow.appendChild(ta);newRow.appendChild(sendBtn);
+    cmtSection.appendChild(newRow);
+    setTimeout(()=>ta.focus(),30);
+  };
+  ac.appendChild(cmtSection);
+
+  // ===== 削除ボタン =====
+  const footerRow=document.createElement('div');footerRow.style.cssText='display:flex;gap:6px;padding:6px 12px 10px;';
   const delBtnA=document.createElement('button');delBtnA.className='btn danger sm';delBtnA.textContent='🗑 削除';
-  delBtnA.onclick=async(e)=>{
-    e.stopPropagation();
+  delBtnA.onclick=async()=>{
     if(!confirm('このカードを削除しますか？'))return;
     col.cards=col.cards.filter(x=>x.id!==card.id);
     await saveBoardDirect(adminSem,num);
-    renderAdminCols();
+    const overlay=document.querySelector('.admin-student-overlay');
+    if(overlay){overlay.remove();openAdminStudentPopup(num,state.sems[adminSem][num]);}
+    else renderAdminCols();
   };
-  cardDetail.appendChild(delBtnA);
-  ac.appendChild(cardDetail);
-
-  // ===== タップで開閉（同じ月内で排他制御） =====
-  cardHdr.onclick=(e)=>{
-    const isOpen=cardDetail.style.display!=='none';
-    const parentMonth=ac.closest('[data-month-body]')||ac.parentElement;
-    // 他のカードを全部閉じてプレビューを再表示
-    parentMonth.querySelectorAll('.admin-card-item').forEach(sibling=>{
-      if(sibling!==ac){
-        const sibDetail=sibling.lastElementChild;
-        const sibChev=sibling.querySelector('span');
-        const sibPreview=sibling.querySelector('.card-preview-txt');
-        if(sibDetail&&sibDetail!==sibling.firstElementChild)sibDetail.style.display='none';
-        if(sibChev)sibChev.style.transform='';
-        if(sibPreview)sibPreview.style.display='';
-      }
-    });
-    if(isOpen){
-      // 閉じる → プレビュー再表示
-      cardDetail.style.display='none';
-      cardChevron.style.transform='';
-      previewTxt.style.display='';
-    } else {
-      // 開く → プレビュー非表示（全文が展開されるので不要）
-      cardDetail.style.display='block';
-      cardChevron.style.transform='rotate(180deg)';
-      previewTxt.style.display='none';
-      requestAnimationFrame(()=>autoResize(rta));
-    }
-  };
+  footerRow.appendChild(delBtnA);ac.appendChild(footerRow);
 
   return ac;
 }
