@@ -1345,7 +1345,7 @@ function buildAdminCardEl(col,card,num,brd){
   ac.style.cssText='border-radius:10px;border:1px solid rgba(0,0,0,0.08);margin-bottom:10px;background:#fff;overflow:hidden;';
 
   // ===== 画像 =====
-  if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:120px;object-fit:cover;border-radius:10px 10px 0 0;display:block;';ac.appendChild(im);}
+  if(card.img){const im=document.createElement('img');im.src=card.img;im.style.cssText='width:100%;max-height:300px;object-fit:contain;border-radius:10px 10px 0 0;display:block;background:#f5f5f5;';ac.appendChild(im);}
 
   // ===== 本文エリア =====
   const body=document.createElement('div');body.style.cssText='padding:10px 12px 6px;';
@@ -1613,7 +1613,7 @@ function buildAdminTrashEl(num,brd){
   const ts=document.createElement('div');ts.className='trash-section';
   const tt=document.createElement('div');tt.className='trash-section-title';tt.textContent='🗑 削除済み（復元可能）';ts.appendChild(tt);
   const t=brd.trash;const tc=document.createElement('div');tc.className='trash-card-item';
-  if(t.card.img){const im=document.createElement('img');im.src=t.card.img;im.style.cssText='width:100%;max-height:60px;object-fit:cover;border-radius:6px;margin-bottom:4px;';tc.appendChild(im);}
+  if(t.card.img){const im=document.createElement('img');im.src=t.card.img;im.style.cssText='width:100%;max-height:150px;object-fit:contain;border-radius:6px;margin-bottom:4px;background:#f5f5f5;';tc.appendChild(im);}
   if(t.card.text){const tx=document.createElement('div');tx.className='trash-card-text';tx.textContent=t.card.text;tc.appendChild(tx);}
   const tm=document.createElement('div');tm.className='trash-card-meta';tm.textContent='📅'+(t.card.createdTs||t.card.ts);tc.appendChild(tm);
   const rb2=document.createElement('button');rb2.className='btn success sm';rb2.style.marginTop='5px';rb2.textContent='↩ 復元する';
